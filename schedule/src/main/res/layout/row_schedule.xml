@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tableRowSchedule"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp" >
+
+        <TextView
+            android:id="@+id/dateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1.0"
+            android:textSize="23sp" />
+
+        <TextView
+            android:id="@+id/todayTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:textSize="23sp" />
+    </TableRow>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
+
+        <TextView
+            android:id="@+id/timeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:textSize="23sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/disciplineTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/timeTextView"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/discipline2TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/disciplineTextView"
+            android:layout_toRightOf="@id/timeTextView"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/typeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@id/discipline2TextView"
+            android:layout_toRightOf="@id/timeTextView"
+            android:textSize="23sp" />
+
+        <TextView
+            android:id="@+id/auditoryTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/typeTextView"
+            android:layout_toRightOf="@id/timeTextView"
+            android:textSize="23sp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+</LinearLayout>

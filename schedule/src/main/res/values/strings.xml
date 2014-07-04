@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Расписание</string>
+    <string name="filters">Фильтры</string>
+    <string name="subgroup">Учебная группа</string>
+    <string name="discipline">Дисциплина</string>
+    <string name="type">Тип занятия</string>
+    <string name="updateSchedule">Обновить расписание</string>
+    <string name="today">Сегодня</string>
+    <string name="zeroTime">00:00–00:00</string>
+    <string name="logo">Логотип Технопарка</string>
+    <string name="schedule">Расписание</string>
+    <string name="weCantGetData">Мы не смогли получить данные</string>
+    <string name="tryAgain">Попробовать ещё</string>
+    <string name="exit">Выход</string>
+    <string name="connectionError">Ошибка соединения</string>
+
+</resources>
