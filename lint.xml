@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="MissingTranslation" severity="ignore" />
+    <issue id="NewApi">
+        <ignore path="src/ru/mail/tp/schedule/ScheduleActivity.java" />
+        <ignore path="src/tp.schedule.utils/OnSwipeListener.java" />
+    </issue>
+</lint>
