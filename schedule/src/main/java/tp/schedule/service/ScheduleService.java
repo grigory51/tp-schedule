@@ -18,8 +18,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import ru.mail.tp.schedule.R;
+import tp.schedule.schedule.ScheduleJSONProcessor;
 import tp.schedule.schedule.ScheduleItem;
-import tp.schedule.schedule.ScheduleItemFactory;
 
 
 /**
@@ -34,12 +35,13 @@ public class ScheduleService extends Service {
     public static int STATUS_ERROR = 1;
 
     public static String PARAM_DATA = "data";
+    public static String PARAM_FILTER = "filter";
     public static String PARAM_ERROR_MSG = "errorMessage";
-    public static String PARAM_STATUS = "status";
+    public static String PARAM_PENDING_INTENT = "pendingIntent";
 
 
     final String LOG_TAG = "ScheduleService";
-    String dataSourceUrl = "http://tptt.ozhegov.name/";
+    String dataSourceUrl;
     ArrayList<ScheduleItem> data = new ArrayList<ScheduleItem>();
     ExecutorService executorService;
 
@@ -54,9 +56,13 @@ public class ScheduleService extends Service {
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        PendingIntent pendingIntent = intent.getParcelableExtra("pendingIntent");
-
-        this.executorService.execute(new ScheduleFetcher(this.dataSourceUrl, pendingIntent));
+        if (intent != null) {
+            PendingIntent pendingIntent = intent.getParcelableExtra(ScheduleService.PARAM_PENDING_INTENT);
+            if (pendingIntent != null) {
+                this.dataSourceUrl = getString(R.string.dataSourceUrl);
+                this.executorService.execute(new ScheduleFetcher(this.dataSourceUrl, pendingIntent));
+            }
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -98,10 +104,11 @@ public class ScheduleService extends Service {
             try {
                 String data = this.fetchSchedule();
                 JSONObject json = new JSONObject(data);
-                ScheduleItemFactory factory = new ScheduleItemFactory(json);
+                ScheduleJSONProcessor processor = new ScheduleJSONProcessor(json);
 
                 status = ScheduleService.STATUS_OK;
-                intent.putExtra(ScheduleService.PARAM_DATA, factory.getScheduleItems());
+                intent.putExtra(ScheduleService.PARAM_DATA, processor.getScheduleItems());
+                intent.putExtra(ScheduleService.PARAM_FILTER, processor.getScheduleFilter());
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Ошибка сети");
                 status = ScheduleService.STATUS_ERROR;
