@@ -46,6 +46,9 @@ public class ScheduleActivity extends SherlockActivity implements OnClickListene
 
         initMenu();
         initSpinners();*/
+        if (this.scheduleFilter != null) {
+            this.initSpinners();
+        }
     }
 
     private void initActionBar() {
@@ -61,80 +64,57 @@ public class ScheduleActivity extends SherlockActivity implements OnClickListene
         menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
         menu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
         menu.setMenu(R.layout.menu);
+    private void initSpinners() {
+        FilterArrayAdapter subgroupListAdapter = new FilterArrayAdapter(this);
+        FilterArrayAdapter disciplineListAdapter = new FilterArrayAdapter(this);
+        FilterArrayAdapter typeListAdapter = new FilterArrayAdapter(this);
 
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
         menu.setBehindWidth((int) (screenWidth * 0.8));
-
-    }
-
-    private void initSpinners() {
-        initSubgroupsSpinner();
-        initDisciplinesSpinner();
-        initTypesSpinner();
-    }
-
-    private void initSubgroupsSpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner subgroupsSpinner = (Spinner) findViewById(R.id.subgroupsSpinner);
-        subgroupsSpinner.setAdapter(adapter);
-        subgroupsSpinner.setSelection(filter.getSubgroup() + 1);
+        Spinner disciplinesSpinner = (Spinner) findViewById(R.id.disciplinesSpinner);
+        Spinner typesSpinner = (Spinner) findViewById(R.id.typesSpinner);
+
+    }
+        subgroupsSpinner.setAdapter(subgroupListAdapter);
+        disciplinesSpinner.setAdapter(disciplineListAdapter);
+        typesSpinner.setAdapter(typeListAdapter);
+
+        subgroupListAdapter.addAll(this.scheduleFilter.getSubgroupTitles());
+        disciplineListAdapter.addAll(this.scheduleFilter.getDisciplineTitles());
+        typeListAdapter.addAll(this.scheduleFilter.getTypeTitles());
+
         subgroupsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1,
-                                       int arg2, long arg3) {
-                int position = ((Spinner) findViewById(R.id.subgroupsSpinner)).getSelectedItemPosition();
-                filter.setSubgroup(position);
-
-                updateScheduleView();
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                /*int position = ((Spinner) findViewById(R.id.subgroupsSpinner)).getSelectedItemPosition();
+                scheduleFilter.setSubgroup(position);*/
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-
             }
         });
-    }
 
-    private void initDisciplinesSpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner disciplinesSpinner = (Spinner) findViewById(R.id.disciplinesSpinner);
-        disciplinesSpinner.setAdapter(adapter);
-        disciplinesSpinner.setSelection(filter.getDiscipline() + 1);
         disciplinesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1,
-                                       int arg2, long arg3) {
-                filter.setDiscipline(((Spinner) findViewById(R.id.disciplinesSpinner)).getSelectedItemPosition());
-                updateScheduleView();
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                //scheduleFilter.setDiscipline(((Spinner) findViewById(R.id.disciplinesSpinner)).getSelectedItemPosition());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-
             }
         });
-    }
 
-    private void initTypesSpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner typesSpinner = (Spinner) findViewById(R.id.typesSpinner);
-        typesSpinner.setAdapter(adapter);
-        typesSpinner.setSelection(filter.getType() + 1);
         typesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1,
-                                       int arg2, long arg3) {
-                // TODO Auto-generated method stub
-                filter.setType(((Spinner) findViewById(R.id.typesSpinner)).getSelectedItemPosition());
-                updateScheduleView();
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                //scheduleFilter.setType(((Spinner) findViewById(R.id.typesSpinner)).getSelectedItemPosition());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
             }
         });
     }
