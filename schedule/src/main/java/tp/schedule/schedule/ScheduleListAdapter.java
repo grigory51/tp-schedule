@@ -1,7 +1,6 @@
 package tp.schedule.schedule;
 
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.util.ArrayList;
 
 import ru.mail.tp.schedule.R;
 
@@ -10,98 +9,90 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
     private final Activity context;
-    private final ScheduleItem[] schedule;
-    private static boolean[] withDate;
+    private final ArrayList<ScheduleItem> schedule;
 
-    public ScheduleListAdapter(Activity context, ScheduleItem[] schedule) {
+    public ScheduleListAdapter(Activity context, ArrayList<ScheduleItem> schedule) {
         super(context, R.layout.row_schedule, schedule);
         this.context = context;
         this.schedule = schedule;
-        withDate = new boolean[schedule.length];
-        initWithDate();
     }
 
     private static class ViewHolder {
-        public TextView discipline, type, time, date, today;
+        private TextView title, subtitle, time, date;
+        private TextView today;
+        private TableRow dateRow;
+
+        public void init(View rowView) {
+            this.time = (TextView) rowView.findViewById(R.id.timeTextView);
+            this.title = (TextView) rowView.findViewById(R.id.titleTextView);
+            this.subtitle = (TextView) rowView.findViewById(R.id.subtitleTextView);
+            this.date = (TextView) rowView.findViewById(R.id.dateTextView);
+            this.dateRow = (TableRow) rowView.findViewById(R.id.dateRow);
+            this.today = (TextView) rowView.findViewById(R.id.todayTextView);
+        }
+
+        public void fill(ScheduleItem item) {
+            this.time.setText(item.getTime());
+            this.title.setText(item.getTitle());
+            this.time.setText(item.getTimeInterval());
+            this.subtitle.setText("Наверное лекция");
+            this.date.setText(item.getDate());
+        }
+
+        public void hideDateBar() {
+            this.dateRow.setVisibility(View.GONE);
+        }
+
+        public void showDateBar() {
+            this.dateRow.setVisibility(View.VISIBLE);
+        }
+
+        public void hideTodayTitle() {
+            this.today.setVisibility(View.GONE);
+        }
+
+        public void showTodayTitle() {
+            this.today.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        View rowView = convertView;
-        LayoutInflater inflater = context.getLayoutInflater();
+        LayoutInflater inflater = this.context.getLayoutInflater();
 
-        rowView = inflater.inflate(R.layout.row_schedule, null, true);
-
-        holder = new ViewHolder();
-        initHolder(holder, rowView);
-        rowView.setTag(holder);
-
-        fillHolder(holder, schedule[position]);
-        initDate(holder, rowView, schedule[position]);
-
-        return rowView;
-    }
-
-    private void initDate(ViewHolder holder, View rowView, ScheduleItem scheduleCell) {
-        holder.date = (TextView) rowView.findViewById(R.id.dateTextView);
-        holder.date.setText(getDate(scheduleCell.getWeekDay(), scheduleCell.getDate()));
-        if (isToday(scheduleCell.getTimeStart())) {
-            holder.today = (TextView) rowView.findViewById(R.id.todayTextView);
-            holder.today.setText("Сегодня");
+        if (convertView == null) {
+            convertView = inflater.inflate(R.layout.row_schedule, parent, false);
+            holder = new ViewHolder();
+            holder.init(convertView);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
-    }
 
-    private void initHolder(ViewHolder holder, View rowView) {
-        holder.time = (TextView) rowView.findViewById(R.id.timeTextView);
-        holder.discipline = (TextView) rowView.findViewById(R.id.disciplineTextView);
-        holder.type = (TextView) rowView.findViewById(R.id.typeTextView);
-    }
+        holder.fill(schedule.get(position));
 
-    private void fillHolder(ViewHolder holder, ScheduleItem scheduleItem) {
-        holder.time.setText(scheduleItem.getTime());
-        holder.discipline.setText(scheduleItem.getDiscipline());
-        holder.type.setText(getType(scheduleItem.getType(), scheduleItem.getAuditory()));
-    }
-
-    private String getType(String type, String auditory) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(type);
-        sb.append(", ");
-        if (!auditory.equals("МЗДК")) {
-            sb.append("ауд. ");
+        if (position > 0) {
+            if (schedule.get(position - 1).getDayStart() == schedule.get(position).getDayStart()) {
+                holder.hideDateBar();
+            } else {
+                holder.showDateBar();
+            }
+        } else {
+            holder.showDateBar();
         }
-        sb.append(auditory);
-        return sb.toString();
-    }
 
-    private String getDate(String weekDay, String date) {
-        return weekDay + ", " + date;
-    }
-
-    private boolean isSameDate(Calendar lastCalendar, long time) {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
-        calendar.setTimeInMillis(time);
-        return (calendar.get(Calendar.DAY_OF_YEAR) == lastCalendar.get(Calendar.DAY_OF_YEAR)) &&
-                (calendar.get(Calendar.YEAR) == lastCalendar.get(Calendar.YEAR));
-    }
-
-    private boolean isToday(long time) {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        return isSameDate(calendar, time);
-    }
-
-    private void initWithDate() {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
-        calendar.setTimeInMillis(0);
-        for (int count = 0; count < schedule.length; count++) {
-            withDate[count] = !isSameDate(calendar, schedule[count].getTimeStart());
-            calendar.setTimeInMillis(schedule[count].getTimeStart());
+        if (schedule.get(position).isToday()) {
+            holder.showTodayTitle();
+        } else {
+            holder.hideTodayTitle();
         }
+
+        return convertView;
     }
 }
