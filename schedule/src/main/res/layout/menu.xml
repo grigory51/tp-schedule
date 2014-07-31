@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<RelativeLayout
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/menu"
+    android:longClickable="true"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
+    android:paddingLeft="5dp">
 
-    <TableLayout
-        android:id="@+id/menu"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="40dp" >
+        android:orientation="vertical"
+        android:id="@+id/linearLayout"
+        android:layout_marginBottom="10dp">
 
-        <TextView
-            android:id="@+id/filtersTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/filters"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
             android:layout_width="match_parent"
@@ -28,6 +28,17 @@
             android:id="@+id/subgroupsSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/linearLayout2"
+        android:weightSum="1"
+        android:layout_marginBottom="10dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -40,6 +51,16 @@
             android:id="@+id/disciplinesSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/linearLayout2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true">
+
 
         <TextView
             android:layout_width="match_parent"
@@ -52,6 +73,6 @@
             android:id="@+id/typesSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </TableLayout>
+    </LinearLayout>
 
-</ScrollView>
+</RelativeLayout>
