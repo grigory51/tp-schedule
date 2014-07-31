@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="@string/schedule"
+        android:text="@string/app_name"
         android:textSize="40sp" />
 
     <ImageView
@@ -19,13 +19,15 @@
         android:layout_above="@+id/scheduleTextView"
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/logo"
-        android:src="@drawable/logo" />
+        android:src="@drawable/logo"
+        android:scaleType="centerInside" />
 
     <ProgressBar
         android:id="@+id/progressBar1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp" />
 
 </RelativeLayout>
