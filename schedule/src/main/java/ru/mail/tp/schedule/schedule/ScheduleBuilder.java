@@ -3,6 +3,8 @@ package ru.mail.tp.schedule.schedule;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
+
 /**
  * author: grigory51
  * date: 27/09/14
