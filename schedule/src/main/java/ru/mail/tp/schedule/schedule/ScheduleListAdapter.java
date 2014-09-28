@@ -1,8 +1,4 @@
-package tp.schedule.schedule;
-
-import java.util.ArrayList;
-
-import ru.mail.tp.schedule.R;
+package ru.mail.tp.schedule.schedule;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -12,6 +8,10 @@ import android.widget.ArrayAdapter;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
+import ru.mail.tp.schedule.R;
+
 public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
     private final Activity context;
     private final ArrayList<ScheduleItem> schedule;
@@ -20,45 +20,6 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
         super(context, R.layout.row_schedule, schedule);
         this.context = context;
         this.schedule = schedule;
-    }
-
-    private static class ViewHolder {
-        private TextView title, subtitle, time, date;
-        private TextView today;
-        private TableRow dateRow;
-
-        public void init(View rowView) {
-            this.time = (TextView) rowView.findViewById(R.id.timeTextView);
-            this.title = (TextView) rowView.findViewById(R.id.titleTextView);
-            this.subtitle = (TextView) rowView.findViewById(R.id.subtitleTextView);
-            this.date = (TextView) rowView.findViewById(R.id.dateTextView);
-            this.dateRow = (TableRow) rowView.findViewById(R.id.dateRow);
-            this.today = (TextView) rowView.findViewById(R.id.todayTextView);
-        }
-
-        public void fill(ScheduleItem item) {
-            this.time.setText(item.getTime());
-            this.title.setText(item.getTitle());
-            this.time.setText(item.getTimeInterval());
-            this.subtitle.setText("Наверное лекция");
-            this.date.setText(item.getDate());
-        }
-
-        public void hideDateBar() {
-            this.dateRow.setVisibility(View.GONE);
-        }
-
-        public void showDateBar() {
-            this.dateRow.setVisibility(View.VISIBLE);
-        }
-
-        public void hideTodayTitle() {
-            this.today.setVisibility(View.GONE);
-        }
-
-        public void showTodayTitle() {
-            this.today.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -94,5 +55,44 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
         }
 
         return convertView;
+    }
+
+    private static class ViewHolder {
+        private TextView title, subtitle, time, date;
+        private TextView today;
+        private TableRow dateRow;
+
+        public void init(View rowView) {
+            this.time = (TextView) rowView.findViewById(R.id.timeTextView);
+            this.title = (TextView) rowView.findViewById(R.id.titleTextView);
+            this.subtitle = (TextView) rowView.findViewById(R.id.subtitleTextView);
+            this.date = (TextView) rowView.findViewById(R.id.dateTextView);
+            this.dateRow = (TableRow) rowView.findViewById(R.id.dateRow);
+            this.today = (TextView) rowView.findViewById(R.id.todayTextView);
+        }
+
+        public void fill(ScheduleItem item) {
+            this.time.setText(item.getTime());
+            this.title.setText(item.getTitle());
+            this.time.setText(item.getTimeInterval());
+            this.subtitle.setText(item.getSubtitle());
+            this.date.setText(item.getDate());
+        }
+
+        public void hideDateBar() {
+            this.dateRow.setVisibility(View.GONE);
+        }
+
+        public void showDateBar() {
+            this.dateRow.setVisibility(View.VISIBLE);
+        }
+
+        public void hideTodayTitle() {
+            this.today.setVisibility(View.GONE);
+        }
+
+        public void showTodayTitle() {
+            this.today.setVisibility(View.VISIBLE);
+        }
     }
 }
