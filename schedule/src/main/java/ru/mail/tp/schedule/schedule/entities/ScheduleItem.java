@@ -122,7 +122,7 @@ public class ScheduleItem implements Serializable {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
         calendar.setTimeInMillis(this.getTimeStart());
 
-        return calendar.get(Calendar.DAY_OF_MONTH) + " " + month[calendar.get(Calendar.MONTH)];
+        return weekDays[calendar.get(Calendar.DAY_OF_WEEK) - 2] + ", " + calendar.get(Calendar.DAY_OF_MONTH) + " " + month[calendar.get(Calendar.MONTH)];
     }
 
     public String getTimeInterval() {
