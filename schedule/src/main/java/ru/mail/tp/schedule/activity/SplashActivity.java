@@ -21,7 +21,7 @@ public class SplashActivity extends Activity implements ITaskResultReceiver {
 
         setContentView(R.layout.activity_splash);
 
-        Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/pfisopro.ttf");
+        Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/pfisopro_regular.ttf");
         TextView myTextView = (TextView)findViewById(R.id.splashScreenTitle);
         myTextView.setTypeface(myTypeface);
     }
