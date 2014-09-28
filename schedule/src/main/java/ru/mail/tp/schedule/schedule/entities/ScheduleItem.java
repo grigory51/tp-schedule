@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.TimeZone;
 
 import ru.mail.tp.schedule.schedule.ScheduleFilter;
@@ -12,6 +14,12 @@ import ru.mail.tp.schedule.schedule.ScheduleFilter;
 public class ScheduleItem implements Serializable {
     private static String[] weekDays = {"Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"};
     private static String[] month = {"января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"};
+
+    private static Comparator<Subgroup> subgroupComparator = new Comparator<Subgroup>() {
+        public int compare(Subgroup a, Subgroup b) {
+            return a.getTitle().compareTo(b.getTitle());
+        }
+    };
 
     private long timeStart, timeEnd;
     private Type type;
@@ -58,7 +66,11 @@ public class ScheduleItem implements Serializable {
     }
 
     public String getTitle() {
-        return this.title;
+        if (this.type == Type.EVENT) {
+            return this.title;
+        } else {
+            return this.discipline.getTitle();
+        }
     }
 
     public Type getType() {
@@ -74,7 +86,7 @@ public class ScheduleItem implements Serializable {
     }
 
     public ArrayList<Subgroup> getSubgroups() {
-        return subgroups;
+        return this.subgroups;
     }
 
     public Place getPlace() {
@@ -132,7 +144,19 @@ public class ScheduleItem implements Serializable {
         if (this.getType() == Type.EVENT) {
             return this.getPlace().getTitle();
         } else {
-            return this.getLessonType().getTitle() + "\n" + this.getPlace().getTitle();
+            StringBuilder result = new StringBuilder();
+            result.append(this.getLessonType().getTitle());
+            result.append("\n");
+            for (int i = 0; i < this.getSubgroups().size(); i++) {
+                result.append(this.getSubgroups().get(i).getTitle());
+                if (i < this.getSubgroups().size() - 1) {
+                    result.append(", ");
+                }
+            }
+            result.append("\n");
+            result.append(this.getPlace().getTitle());
+
+            return result.toString();
         }
     }
 
