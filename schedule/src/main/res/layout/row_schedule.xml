@@ -58,10 +58,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="jsdofjd"
+            android:text='Тренинг "Механики командной работы"'
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/timeTextView"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_alignRight="@+id/subtitleTextView"/>
 
         <TextView
             android:id="@+id/subtitleTextView"
@@ -70,8 +71,9 @@
             android:layout_alignWithParentIfMissing="true"
             android:textSize="18sp"
             android:layout_below="@id/titleTextView"
-            android:text="fnodosjnf"
-            android:layout_toRightOf="@+id/timeTextView" />
+            android:text="fnodosjnf djoasdjoasjdoiasjdoiasjdoiajs"
+            android:layout_toRightOf="@+id/timeTextView"
+            android:gravity="clip_horizontal"/>
 
     </RelativeLayout>
 

@@ -9,7 +9,10 @@
         android:layout_height="wrap_content"
         android:onClick="onClick"
         android:src="@drawable/ic_menu"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitStart"
+        android:background="#00000000"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"/>
 
 
     <ImageButton
@@ -20,7 +23,8 @@
         android:src="@drawable/ic_menu_refresh"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/todayButton"
@@ -32,7 +36,8 @@
         android:textSize="12sp"
         android:layout_toLeftOf="@id/updateScheduleButton"
         android:layout_alignBottom="@id/updateScheduleButton"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:visibility="gone"/>
 
 
 

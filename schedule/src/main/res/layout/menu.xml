@@ -22,12 +22,14 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="10dp"
-            android:text="@string/subgroup" />
+            android:text="@string/subgroup"
+            android:visibility="gone"/>
 
         <Spinner
             android:id="@+id/subgroupsSpinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <LinearLayout
