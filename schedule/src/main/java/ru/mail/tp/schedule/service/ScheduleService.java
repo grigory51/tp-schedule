@@ -1,10 +1,10 @@
-package tp.schedule.service;
+package ru.mail.tp.schedule.service;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
-import android.app.PendingIntent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,8 +19,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ru.mail.tp.schedule.R;
-import tp.schedule.schedule.ScheduleJSONProcessor;
-import tp.schedule.schedule.ScheduleItem;
+import ru.mail.tp.schedule.schedule.ScheduleItem;
+import ru.mail.tp.schedule.schedule.ScheduleJSONProcessor;
 
 
 /**
@@ -108,7 +108,7 @@ public class ScheduleService extends Service {
 
                 status = ScheduleService.STATUS_OK;
                 intent.putExtra(ScheduleService.PARAM_DATA, processor.getScheduleItems());
-                intent.putExtra(ScheduleService.PARAM_FILTER, processor.getScheduleFilter());
+                intent.putExtra(ScheduleService.PARAM_FILTER, processor.getScheduleFiltersData());
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Ошибка сети");
                 status = ScheduleService.STATUS_ERROR;
