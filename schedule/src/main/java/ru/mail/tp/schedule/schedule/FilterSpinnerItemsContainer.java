@@ -5,6 +5,8 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 
 public class FilterSpinnerItemsContainer implements Serializable {
@@ -12,11 +14,21 @@ public class FilterSpinnerItemsContainer implements Serializable {
     ArrayList<FilterSpinnerItem> disciplineItems = new ArrayList<FilterSpinnerItem>();
     ArrayList<FilterSpinnerItem> typeItems = new ArrayList<FilterSpinnerItem>();
 
-    FilterSpinnerItemsContainer(JSONObject disciplines, JSONObject types, JSONObject subgroups) throws JSONException {
+    public FilterSpinnerItemsContainer(JSONObject disciplines, JSONObject types, JSONObject subgroups) throws JSONException {
         String key;
+        Comparator<FilterSpinnerItem> comparator = new Comparator<FilterSpinnerItem>() {
+            public int compare(FilterSpinnerItem a, FilterSpinnerItem b) {
+                if (a.getId() == 0) {
+                    return -1;
+                }
+                if (b.getId() == 0) {
+                    return 1;
+                }
+                return a.getTitle().compareTo(b.getTitle());
+            }
+        };
 
         this.subgroupItems.add(new FilterSpinnerItem(0, "Все"));
-
         Iterator<?> subgroupIds = subgroups.keys();
         while (subgroupIds.hasNext()) {
             key = (String) subgroupIds.next();
@@ -24,7 +36,6 @@ public class FilterSpinnerItemsContainer implements Serializable {
         }
 
         this.disciplineItems.add(new FilterSpinnerItem(0, "Все"));
-
         Iterator<?> disciplineIds = disciplines.keys();
         while (disciplineIds.hasNext()) {
             key = (String) disciplineIds.next();
@@ -33,12 +44,15 @@ public class FilterSpinnerItemsContainer implements Serializable {
         }
 
         this.typeItems.add(new FilterSpinnerItem(0, "Все"));
-
         Iterator<?> typeIds = types.keys();
         while (typeIds.hasNext()) {
             key = (String) typeIds.next();
             this.typeItems.add(new FilterSpinnerItem(key, types.getString(key)));
         }
+
+        Collections.sort(this.subgroupItems, comparator);
+        Collections.sort(this.disciplineItems, comparator);
+        Collections.sort(this.typeItems, comparator);
     }
 
     public ArrayList<FilterSpinnerItem> getSubgroupItems() {
