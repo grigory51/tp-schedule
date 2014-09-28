@@ -38,7 +38,13 @@ public class ScheduleItem implements Serializable {
         this.title = title;
         this.place = place;
 
-        this.subgroups = subgroups;
+        if (subgroups != null) {
+            this.subgroups = subgroups;
+            Collections.sort(this.subgroups, subgroupComparator);
+        } else {
+            this.subgroups = new ArrayList<Subgroup>();
+        }
+
         this.discipline = discipline;
         this.lessonType = lessonType;
     }
@@ -131,7 +137,7 @@ public class ScheduleItem implements Serializable {
     }
 
     public boolean isFilterMatch(ScheduleFilter filter) {
-        if (filter.getDisciplineId() != 0 && this.getDiscipline().getId() != filter.getDisciplineId()) {
+        if (filter.getDisciplineId() != 0 && (this.getDiscipline() == null || this.getDiscipline().getId() != filter.getDisciplineId())) {
             return false;
         }
         if (filter.getSubgroupId() != 0) {
@@ -147,7 +153,7 @@ public class ScheduleItem implements Serializable {
             }
         }
         //noinspection RedundantIfStatement
-        if (filter.getLessonTypeId() != 0 && this.getLessonType().getId() != filter.getLessonTypeId()) {
+        if (filter.getLessonTypeId() != 0 && (this.getLessonType() == null || this.getLessonType().getId() != filter.getLessonTypeId())) {
             return false;
         }
         return true;
