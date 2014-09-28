@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import ru.mail.tp.schedule.R;
+import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
 
 public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
     private final Activity context;
@@ -72,9 +73,8 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
         }
 
         public void fill(ScheduleItem item) {
-            this.time.setText(item.getTime());
-            this.title.setText(item.getTitle());
             this.time.setText(item.getTimeInterval());
+            this.title.setText(item.getTitle());
             this.subtitle.setText(item.getSubtitle());
             this.date.setText(item.getDate());
         }
