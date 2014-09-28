@@ -1,14 +1,12 @@
-package tp.schedule.schedule;
-
-import android.util.Log;
+package ru.mail.tp.schedule.schedule;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Comparator;
+import java.util.Iterator;
 
 
 /**
@@ -16,11 +14,11 @@ import java.util.Comparator;
  * date: 04.07.14
  */
 public class ScheduleJSONProcessor {
-    private JSONObject auditories, types, subgroups, disciplines, places;
+    private JSONObject auditoriums, types, subgroups, disciplines, places;
     private JSONObject timetable;
 
     public ScheduleJSONProcessor(JSONObject json) throws JSONException {
-        this.auditories = json.getJSONObject("auditoriums");
+        this.auditoriums = json.getJSONObject("auditoriums");
         this.places = json.getJSONObject("places");
         this.types = json.getJSONObject("types");
         this.subgroups = json.getJSONObject("groups");
@@ -40,6 +38,9 @@ public class ScheduleJSONProcessor {
             long timeEnd = item.getLong("time_end");
             String placeTitle = "";
             String title = "";
+            String type = null;
+            int lessonTypeId = 0;
+            int disciplineId = 0;
             String eventType = item.getString("event");
             if (eventType.equals("event")) {
                 title = item.getString("title");
@@ -49,16 +50,19 @@ public class ScheduleJSONProcessor {
                 if (!placeId.equals("0")) {
                     placeTitle = this.places.getString(placeId);
                 } else if (!auditoriumId.equals("0")) {
-                    placeTitle = this.auditories.getString(auditoriumId);
+                    placeTitle = this.auditoriums.getString(auditoriumId);
                 }
             } else if (eventType.equals("lesson")) {
+                disciplineId = item.getInt("discipline");
                 title = this.disciplines.getJSONObject(item.getString("discipline")).getString("long_name");
+                lessonTypeId = item.getInt("type");
+                type = this.types.getString(item.getString("type"));
                 String auditoriumId = item.getString("auditorium");
                 if (!auditoriumId.equals("0")) {
-                    placeTitle = this.auditories.getString(auditoriumId);
+                    placeTitle = this.auditoriums.getString(auditoriumId);
                 }
             }
-            result.add(new ScheduleItem(timeStart, timeEnd, title, placeTitle, new String[]{}, eventType));
+            result.add(new ScheduleItem(timeStart, timeEnd, title, placeTitle, new String[]{}, eventType, type, disciplineId, new int[]{}, lessonTypeId));
         }
 
         Collections.sort(result, new Comparator<ScheduleItem>() {
@@ -74,7 +78,7 @@ public class ScheduleJSONProcessor {
         return result;
     }
 
-    public ScheduleFilter getScheduleFilter() throws JSONException {
-        return new ScheduleFilter(this.disciplines, this.types, this.subgroups);
+    public FilterSpinnerItemsContainer getScheduleFiltersData() throws JSONException {
+        return new FilterSpinnerItemsContainer(this.disciplines, this.types, this.subgroups);
     }
 }
