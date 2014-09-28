@@ -18,11 +18,12 @@ public class SplashActivity extends Activity implements ITaskResultReceiver {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/pf_isopro_regular.ttf");
-        TextView myTextView = (TextView)findViewById(R.id.splashScreenTitle);
-        myTextView.setTypeface(myTypeface);
 
         setContentView(R.layout.activity_splash);
+
+        Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/pfisopro.ttf");
+        TextView myTextView = (TextView)findViewById(R.id.splashScreenTitle);
+        myTextView.setTypeface(myTypeface);
     }
 
     @Override
