@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 
 import ru.mail.tp.schedule.R;
 import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
+import ru.mail.tp.schedule.schedule.entities.Type;
 
 public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
     private final Activity context;
@@ -27,6 +29,7 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         LayoutInflater inflater = this.context.getLayoutInflater();
+        ScheduleItem currentScheduleItem = schedule.get(position);
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.row_schedule, parent, false);
@@ -37,10 +40,22 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.fill(schedule.get(position));
+        holder.fill(currentScheduleItem);
+
+        if (currentScheduleItem.getSubtitle().equals("")) {
+            holder.hideSubtitle();
+        } else  {
+            holder.showSubtitle();
+        }
+
+        if (currentScheduleItem.getType() == Type.EVENT) {
+            holder.setAsEvent();
+        } else {
+            holder.setAsNotEvent();
+        }
 
         if (position > 0) {
-            if (schedule.get(position - 1).getDayStart() == schedule.get(position).getDayStart()) {
+            if (schedule.get(position - 1).getDayStart() == currentScheduleItem.getDayStart()) {
                 holder.hideDateBar();
             } else {
                 holder.showDateBar();
@@ -49,7 +64,7 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
             holder.showDateBar();
         }
 
-        if (schedule.get(position).isToday()) {
+        if (currentScheduleItem.isToday()) {
             holder.showTodayTitle();
         } else {
             holder.hideTodayTitle();
@@ -59,24 +74,41 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
     }
 
     private static class ViewHolder {
-        private TextView title, subtitle, time, date;
+        private TextView timeStart, timeEnd, date;
+        private TextView title, subtitle, locationTitle;
         private TextView today;
         private TableRow dateRow;
+        private RelativeLayout tableRowScheduleContent;
 
         public void init(View rowView) {
-            this.time = (TextView) rowView.findViewById(R.id.timeTextView);
+            this.tableRowScheduleContent = (RelativeLayout) rowView.findViewById(R.id.tableRowScheduleContent);
+            this.timeStart = (TextView) rowView.findViewById(R.id.timeStartTextView);
+            this.timeEnd = (TextView) rowView.findViewById(R.id.timeEndTextView);
+
             this.title = (TextView) rowView.findViewById(R.id.titleTextView);
             this.subtitle = (TextView) rowView.findViewById(R.id.subtitleTextView);
+            this.locationTitle = (TextView) rowView.findViewById(R.id.locationTextView);
+
             this.date = (TextView) rowView.findViewById(R.id.dateTextView);
             this.dateRow = (TableRow) rowView.findViewById(R.id.dateRow);
             this.today = (TextView) rowView.findViewById(R.id.todayTextView);
         }
 
         public void fill(ScheduleItem item) {
-            this.time.setText(item.getTimeInterval());
+            this.timeStart.setText(item.getFormatTimeStart("HH:mm"));
+            this.timeEnd.setText(item.getFormatTimeEnd("HH:mm"));
             this.title.setText(item.getTitle());
             this.subtitle.setText(item.getSubtitle());
+            this.locationTitle.setText(item.getLocation());
             this.date.setText(item.getDate());
+        }
+
+        public void setAsEvent() {
+            this.tableRowScheduleContent.setBackgroundColor(0xFFFCF8E3);
+        }
+
+        public void setAsNotEvent() {
+            this.tableRowScheduleContent.setBackgroundColor(0xFFFFFFFF);
         }
 
         public void hideDateBar() {
@@ -85,6 +117,14 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
 
         public void showDateBar() {
             this.dateRow.setVisibility(View.VISIBLE);
+        }
+
+        public void hideSubtitle() {
+            this.subtitle.setVisibility(View.GONE);
+        }
+
+        public void showSubtitle() {
+            this.subtitle.setVisibility(View.VISIBLE);
         }
 
         public void hideTodayTitle() {

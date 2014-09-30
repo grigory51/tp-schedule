@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_width="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/menu"
     android:longClickable="true"
-    android:paddingRight="10dp"
-    android:paddingTop="10dp"
-    android:paddingLeft="5dp">
+    android:background="#ffffffff">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:id="@+id/linearLayout"
-        android:layout_marginBottom="10dp">
-
+        style="@style/menuItem">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
             android:layout_marginTop="10dp"
             android:text="@string/subgroup"/>
 
@@ -31,19 +24,13 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@+id/linearLayout"
-        android:layout_alignParentLeft="true"
         android:id="@+id/linearLayout2"
-        android:weightSum="1"
-        android:layout_marginBottom="10dp">
+        style="@style/menuItem"
+        android:layout_below="@id/linearLayout">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
             android:layout_marginTop="10dp"
             android:text="@string/discipline"/>
 
@@ -54,18 +41,14 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:id="@+id/linearLayout3"
         android:layout_below="@+id/linearLayout2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true">
+        style="@style/menuItem">
 
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
             android:layout_marginTop="10dp"
             android:text="@string/type"/>
 
@@ -74,5 +57,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_below="@id/linearLayout3"
+        style="@style/menuItem">
+
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/showPast"
+            android:id="@+id/showPastCheckBox"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lastUpdateTextView"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"/>
 
 </RelativeLayout>

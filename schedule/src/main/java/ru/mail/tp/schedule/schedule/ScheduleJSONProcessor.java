@@ -14,7 +14,6 @@ import ru.mail.tp.schedule.schedule.entities.LessonType;
 import ru.mail.tp.schedule.schedule.entities.Place;
 import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
 import ru.mail.tp.schedule.schedule.entities.Subgroup;
-import ru.mail.tp.schedule.schedule.entities.Type;
 
 
 /**
@@ -46,10 +45,10 @@ public class ScheduleJSONProcessor {
 
         Collections.sort(result, new Comparator<ScheduleItem>() {
             public int compare(ScheduleItem a, ScheduleItem b) {
-                if (a.getTimeStart() == b.getTimeStart()) {
+                if (a.getTimeStart().getTime() == b.getTimeStart().getTime()) {
                     return 0;
                 } else {
-                    return a.getTimeStart() - b.getTimeStart() > 0 ? 1 : -1;
+                    return a.getTimeStart().getTime() - b.getTimeStart().getTime() > 0 ? 1 : -1;
                 }
             }
         });
@@ -73,7 +72,7 @@ public class ScheduleJSONProcessor {
             } else if (!auditoriumId.equals("0")) {
                 placeTitle = this.auditoriums.getString(auditoriumId);
             }
-            return new ScheduleItem(Type.EVENT, timeStart, timeEnd, title, new Place(placeTitle));
+            return new ScheduleItem(timeStart, timeEnd, title, new Place(placeTitle));
         } else if (eventType.equals("lesson")) {
             String disciplineId = item.getString("discipline");
             JSONObject disciplineJSON = this.disciplines.getJSONObject(disciplineId);
@@ -86,14 +85,13 @@ public class ScheduleJSONProcessor {
 
             HashSet<String> uniqueIds = new HashSet<String>(); //фиксит баг в API (дублирующиеся id учебных групп), временный костыль
             while (keys.hasNext()) {
-                String subgroupId  = subgroupsIds.getString((String) keys.next());
+                String subgroupId = subgroupsIds.getString((String) keys.next());
                 if (!uniqueIds.contains(subgroupId)) {
                     uniqueIds.add(subgroupId);
                     String subgroupTitle = this.subgroups.getString(subgroupId);
                     subgroups.add(new Subgroup(subgroupId, subgroupTitle));
                 }
             }
-
 
             String lessonTypeId = item.getString("type");
             LessonType lessonType = new LessonType(lessonTypeId, this.types.getString(lessonTypeId));
@@ -104,7 +102,7 @@ public class ScheduleJSONProcessor {
                 place = new Place(this.auditoriums.getString(auditoriumId));
             }
 
-            return new ScheduleItem(Type.LESSON, timeStart, timeEnd, place, subgroups, discipline, lessonType);
+            return new ScheduleItem(timeStart, timeEnd, place, subgroups, discipline, lessonType);
         }
         return null;
     }

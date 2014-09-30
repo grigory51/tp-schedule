@@ -10,9 +10,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 public class FilterSpinnerItemsContainer implements Serializable {
-    ArrayList<FilterSpinnerItem> subgroupItems = new ArrayList<FilterSpinnerItem>();
-    ArrayList<FilterSpinnerItem> disciplineItems = new ArrayList<FilterSpinnerItem>();
-    ArrayList<FilterSpinnerItem> typeItems = new ArrayList<FilterSpinnerItem>();
+    private final ArrayList<FilterSpinnerItem> subgroupItems = new ArrayList<FilterSpinnerItem>();
+    private final ArrayList<FilterSpinnerItem> disciplineItems = new ArrayList<FilterSpinnerItem>();
+    private final ArrayList<FilterSpinnerItem> typeItems = new ArrayList<FilterSpinnerItem>();
 
     public FilterSpinnerItemsContainer(JSONObject disciplines, JSONObject types, JSONObject subgroups) throws JSONException {
         String key;

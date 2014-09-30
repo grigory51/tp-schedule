@@ -22,9 +22,8 @@ import ru.mail.tp.schedule.tasks.TaskResult;
  * date: 26/09/14
  */
 public class ScheduleFetchTask extends Task {
-    private final String LOG_TAG = "ScheduleFetchTask";
-    private String url;
-    private ITaskResultReceiver receiver;
+    private final String url;
+    private final ITaskResultReceiver receiver;
 
     public ScheduleFetchTask(ITaskResultReceiver receiver, String url) {
         this.url = url;
@@ -55,6 +54,7 @@ public class ScheduleFetchTask extends Task {
 
     @Override
     protected TaskResult doInBackground(Void... params) {
+        String LOG_TAG = "ScheduleFetchTask";
         try {
             String data = this.getRawData();
             JSONObject json = new JSONObject(data);

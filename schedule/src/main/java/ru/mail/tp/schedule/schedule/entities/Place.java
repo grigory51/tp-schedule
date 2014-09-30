@@ -7,11 +7,7 @@ import java.io.Serializable;
  * date: 28/09/14
  */
 public class Place implements Serializable {
-    private String title;
-
-    public Place() {
-        this(null);
-    }
+    private final String title;
 
     public Place(String title) {
         this.title = title;
