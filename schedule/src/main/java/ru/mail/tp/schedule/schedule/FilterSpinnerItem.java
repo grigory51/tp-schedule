@@ -7,8 +7,8 @@ import java.io.Serializable;
  * date: 27/09/14
  */
 public class FilterSpinnerItem implements Serializable {
-    private int id;
-    private String title;
+    private final int id;
+    private final String title;
 
     public FilterSpinnerItem(String id, String title) {
         this(Integer.parseInt(id), title);

@@ -10,14 +10,14 @@ import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
  * date: 27/09/14
  */
 public class ScheduleBuilder implements Serializable {
-    private ArrayList<ScheduleItem> list;
+    private final ArrayList<ScheduleItem> list;
 
     public ScheduleBuilder(ArrayList<ScheduleItem> list) {
         this.list = list;
     }
 
     public ArrayList<ScheduleItem> getScheduleItems() {
-        return this.getScheduleItems(null);
+        return this.getScheduleItems(new ScheduleFilter());
     }
 
     public ArrayList<ScheduleItem> getScheduleItems(ScheduleFilter filter) {
