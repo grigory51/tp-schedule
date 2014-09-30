@@ -161,6 +161,9 @@ public class ScheduleItem implements Serializable {
     }
 
     public boolean isFilterMatch(ScheduleFilter filter) {
+        if (!filter.isShowPassed() && MoscowCalendar.getTodayInstance().getTimeInMillis() > this.getDayStart()) {
+            return false;
+        }
         if (filter.getDisciplineId() != 0 && (this.getDiscipline() == null || this.getDiscipline().getId() != filter.getDisciplineId())) {
             return false;
         }
