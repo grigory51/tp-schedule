@@ -1,7 +1,7 @@
 package ru.mail.tp.schedule.tasks.scheduleFetch;
 
-import ru.mail.tp.schedule.schedule.ScheduleBuilder;
 import ru.mail.tp.schedule.schedule.FilterSpinnerItemsContainer;
+import ru.mail.tp.schedule.schedule.ScheduleBuilder;
 import ru.mail.tp.schedule.tasks.TaskResult;
 
 /**
@@ -10,13 +10,13 @@ import ru.mail.tp.schedule.tasks.TaskResult;
  */
 public class ScheduleFetchTaskResult extends TaskResult {
 
-    public static int STATUS_OK = 0;
-    public static int STATUS_NETWORK_ERROR = 1;
-    public static int STATUS_DATA_PROCESS_ERROR = 2;
+    public static final int STATUS_OK = 0;
+    public static final int STATUS_NETWORK_ERROR = 1;
+    public static final int STATUS_DATA_PROCESS_ERROR = 2;
 
-    private ScheduleBuilder scheduleItems;
-    private FilterSpinnerItemsContainer filterSpinnerItemsContainer;
-    private int status;
+    private final ScheduleBuilder scheduleItems;
+    private final FilterSpinnerItemsContainer filterSpinnerItemsContainer;
+    private final int status;
 
     public ScheduleFetchTaskResult(int status) {
         this(status, null, null);
