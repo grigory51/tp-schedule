@@ -107,8 +107,27 @@
                 android:layout_height="wrap_content"
                 android:layout_alignWithParentIfMissing="true"
                 android:textSize="18sp"
-                android:text="fnodosjnf djoasdjoasjdoiasjdoiasjdoiajs"
                 android:gravity="clip_horizontal"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_location"
+                    android:scaleType="fitCenter"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New Text"
+                    android:id="@+id/locationTextView"
+                    android:textSize="18sp"
+                    android:paddingLeft="4dp"/>
+            </LinearLayout>
         </LinearLayout>
 
     </RelativeLayout>
