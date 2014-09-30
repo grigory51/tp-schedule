@@ -43,7 +43,7 @@ public class ScheduleItem implements Serializable {
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
 
-        this.title = title;
+        this.title = StringHelper.quotesFormat(title);
         this.place = place;
 
         if (subgroups != null) {
