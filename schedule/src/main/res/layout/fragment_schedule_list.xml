@@ -4,10 +4,14 @@
     tools:context="ru.mail.tp.schedule.fragments.ScheduleListFragment"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="@color/white">
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/scheduleListView"/>
+        android:id="@+id/scheduleListView"
+        android:choiceMode="singleChoice"
+        android:clickable="true"
+        android:background="@color/white"/>
 </LinearLayout>
