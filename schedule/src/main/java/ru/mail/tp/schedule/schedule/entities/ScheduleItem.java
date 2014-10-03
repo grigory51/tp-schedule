@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
-import ru.mail.tp.schedule.schedule.ScheduleFilter;
+import ru.mail.tp.schedule.schedule.filter.ScheduleFilter;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 import ru.mail.tp.schedule.utils.MoscowSimpleDateFormat;
 import ru.mail.tp.schedule.utils.StringHelper;
@@ -47,7 +47,11 @@ public class ScheduleItem implements Serializable {
         this.timeEnd = new Date(timeEnd);
 
         this.title = StringHelper.quotesFormat(title);
-        this.place = place;
+        if (place != null) {
+            this.place = place;
+        } else {
+            this.place = new Place();
+        }
 
         if (subgroups != null) {
             this.subgroups = subgroups;
@@ -93,7 +97,7 @@ public class ScheduleItem implements Serializable {
     }
 
     Place getPlace() {
-        return place;
+        return this.place;
     }
 
     public boolean isToday() {
