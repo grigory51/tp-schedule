@@ -5,8 +5,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical"
               android:weightSum="1"
-              android:baselineAligned="false"
-    >
+              android:baselineAligned="false">
 
     <TableRow
         android:id="@+id/dateRow"
@@ -112,7 +111,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_height="fill_parent"
+                android:id="@+id/locationTitleContainer">
 
                 <ImageView
                     android:layout_width="wrap_content"
