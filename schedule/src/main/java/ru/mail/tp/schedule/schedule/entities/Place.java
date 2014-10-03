@@ -9,6 +9,10 @@ import java.io.Serializable;
 public class Place implements Serializable {
     private final String title;
 
+    public Place() {
+        this("");
+    }
+
     public Place(String title) {
         this.title = title;
     }
