@@ -8,11 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import ru.mail.tp.schedule.R;
 import ru.mail.tp.schedule.schedule.ScheduleBuilder;
-import ru.mail.tp.schedule.schedule.ScheduleFilter;
 import ru.mail.tp.schedule.schedule.ScheduleListAdapter;
+import ru.mail.tp.schedule.schedule.filter.ScheduleFilter;
 
 public class ScheduleListFragment extends Fragment implements AdapterView.OnItemClickListener {
     ListView scheduleListView;
@@ -29,7 +30,7 @@ public class ScheduleListFragment extends Fragment implements AdapterView.OnItem
 
         Bundle arguments = this.getArguments();
         if (arguments != null) {
-            this.scheduleBuilder = arguments.getParcelable("scheduleBuilder");
+            this.scheduleBuilder = (ScheduleBuilder) arguments.getSerializable("scheduleBuilder");
         }
 
         if (savedInstanceState != null) {
@@ -40,7 +41,7 @@ public class ScheduleListFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("scheduleFilter", this.filter);
+        outState.putSerializable("scheduleFilter", this.filter);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class ScheduleListFragment extends Fragment implements AdapterView.OnItem
 
         if (this.scheduleBuilder != null) {
             this.scheduleListView.setAdapter(new ScheduleListAdapter(this.getActivity(), this.scheduleBuilder.getScheduleItems(this.filter)));
-            this.scheduleListView.setOnItemClickListener(this);
+         //   this.scheduleListView.setOnItemClickListener(this);
         }
 
         return view;
@@ -75,6 +76,6 @@ public class ScheduleListFragment extends Fragment implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        //Toast.makeText(this.getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
     }
 }
