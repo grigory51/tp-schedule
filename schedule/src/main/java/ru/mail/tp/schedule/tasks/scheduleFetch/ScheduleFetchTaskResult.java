@@ -1,6 +1,6 @@
 package ru.mail.tp.schedule.tasks.scheduleFetch;
 
-import ru.mail.tp.schedule.schedule.FilterSpinnerItemsContainer;
+import ru.mail.tp.schedule.schedule.filter.FilterSpinnerItemsContainer;
 import ru.mail.tp.schedule.schedule.ScheduleBuilder;
 import ru.mail.tp.schedule.tasks.TaskResult;
 

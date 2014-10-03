@@ -89,7 +89,7 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
         private LinearLayout locationTitleContainer;
 
         public void init(View rowView) {
-            this.tableRowScheduleContent = (RelativeLayout) rowView.findViewById(R.id.tableRowScheduleContent);
+            this.tableRowScheduleContent = (RelativeLayout) rowView.findViewById(R.id.tableRowSchedule);
             this.timeStart = (TextView) rowView.findViewById(R.id.timeStartTextView);
             this.timeEnd = (TextView) rowView.findViewById(R.id.timeEndTextView);
 
@@ -118,7 +118,7 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
         }
 
         public void setAsNotEvent() {
-            this.tableRowScheduleContent.setBackgroundColor(0xFFFFFFFF);
+            this.tableRowScheduleContent.setBackgroundColor(0x00FFFFFF);
         }
 
         public void hideDateBar() {
