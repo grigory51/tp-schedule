@@ -1,29 +1,20 @@
 package ru.mail.tp.schedule.schedule.entities;
 
-import java.io.Serializable;
+import android.os.Parcel;
+
+import ru.mail.tp.schedule.schedule.filter.FilterSpinner;
 
 /**
  * author: grigory51
  * date: 28/09/14
  */
-public class Subgroup implements Serializable {
-    private final int id;
-    private final String title;
+public class Subgroup extends FilterSpinner {
 
     public Subgroup(String id, String title) {
-        this(Integer.parseInt(id), title);
+        super(id, title);
     }
 
-    private Subgroup(int id, String title) {
-        this.id = id;
-        this.title = title;
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public String getTitle() {
-        return this.title;
+    public Subgroup(int id, String title) {
+        super(id, title);
     }
 }
