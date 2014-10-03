@@ -1,4 +1,4 @@
-package ru.mail.tp.schedule.schedule;
+package ru.mail.tp.schedule.schedule.filter;
 
 /**
  * author: grigory51
