@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -42,9 +43,15 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
 
         holder.fill(currentScheduleItem);
 
+        if (currentScheduleItem.getLocation().equals("")) {
+            holder.hideLocation();
+        } else {
+            holder.showLocation();
+        }
+
         if (currentScheduleItem.getSubtitle().equals("")) {
             holder.hideSubtitle();
-        } else  {
+        } else {
             holder.showSubtitle();
         }
 
@@ -79,6 +86,7 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
         private TextView today;
         private TableRow dateRow;
         private RelativeLayout tableRowScheduleContent;
+        private LinearLayout locationTitleContainer;
 
         public void init(View rowView) {
             this.tableRowScheduleContent = (RelativeLayout) rowView.findViewById(R.id.tableRowScheduleContent);
@@ -92,6 +100,8 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
             this.date = (TextView) rowView.findViewById(R.id.dateTextView);
             this.dateRow = (TableRow) rowView.findViewById(R.id.dateRow);
             this.today = (TextView) rowView.findViewById(R.id.todayTextView);
+
+            this.locationTitleContainer = (LinearLayout) rowView.findViewById(R.id.locationTitleContainer);
         }
 
         public void fill(ScheduleItem item) {
@@ -133,6 +143,14 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
 
         public void showTodayTitle() {
             this.today.setVisibility(View.VISIBLE);
+        }
+
+        public void hideLocation() {
+            this.locationTitleContainer.setVisibility(View.GONE);
+        }
+
+        public void showLocation() {
+            this.locationTitleContainer.setVisibility(View.VISIBLE);
         }
     }
 }
