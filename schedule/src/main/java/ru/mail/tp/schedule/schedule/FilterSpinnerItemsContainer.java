@@ -1,5 +1,8 @@
 package ru.mail.tp.schedule.schedule;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,10 +12,36 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
-public class FilterSpinnerItemsContainer implements Serializable {
-    private final ArrayList<FilterSpinnerItem> subgroupItems = new ArrayList<FilterSpinnerItem>();
-    private final ArrayList<FilterSpinnerItem> disciplineItems = new ArrayList<FilterSpinnerItem>();
-    private final ArrayList<FilterSpinnerItem> typeItems = new ArrayList<FilterSpinnerItem>();
+public class FilterSpinnerItemsContainer implements Serializable, Parcelable {
+    public static final Parcelable.Creator<FilterSpinnerItemsContainer> CREATOR = new Parcelable.Creator<FilterSpinnerItemsContainer>() {
+        public FilterSpinnerItemsContainer createFromParcel(Parcel in) {
+            return new FilterSpinnerItemsContainer(in);
+        }
+
+        public FilterSpinnerItemsContainer[] newArray(int size) {
+            return new FilterSpinnerItemsContainer[size];
+        }
+    };
+
+    private ArrayList subgroupItems = new ArrayList<FilterSpinnerItem>();
+    private ArrayList disciplineItems = new ArrayList<FilterSpinnerItem>();
+    private ArrayList typeItems = new ArrayList<FilterSpinnerItem>();
+
+    private int subgroupPosition, disciplinePosition, typePosition;
+    private boolean showPassed = false;
+
+    public FilterSpinnerItemsContainer(Parcel in) {
+        ClassLoader filterSpinnerItemClassLoader = FilterSpinnerItem.class.getClassLoader();
+
+        this.subgroupItems = in.readArrayList(filterSpinnerItemClassLoader);
+        this.disciplineItems = in.readArrayList(filterSpinnerItemClassLoader);
+        this.typeItems = in.readArrayList(filterSpinnerItemClassLoader);
+
+        this.subgroupPosition = in.readInt();
+        this.disciplinePosition = in.readInt();
+        this.typePosition = in.readInt();
+        this.showPassed = in.readInt() != 0;
+    }
 
     public FilterSpinnerItemsContainer(JSONObject disciplines, JSONObject types, JSONObject subgroups) throws JSONException {
         String key;
@@ -53,17 +82,64 @@ public class FilterSpinnerItemsContainer implements Serializable {
         Collections.sort(this.subgroupItems, comparator);
         Collections.sort(this.disciplineItems, comparator);
         Collections.sort(this.typeItems, comparator);
+
+        this.subgroupPosition = this.disciplinePosition = this.typePosition = 0;
     }
 
-    public ArrayList<FilterSpinnerItem> getSubgroupItems() {
+    public ArrayList getSubgroupItems() {
         return this.subgroupItems;
     }
 
-    public ArrayList<FilterSpinnerItem> getDisciplineItems() {
+    public ArrayList getDisciplineItems() {
         return this.disciplineItems;
     }
 
-    public ArrayList<FilterSpinnerItem> getTypeItems() {
+    public ArrayList getTypeItems() {
         return this.typeItems;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeTypedList(this.subgroupItems);
+        parcel.writeTypedList(this.disciplineItems);
+        parcel.writeTypedList(this.typeItems);
+
+        parcel.writeInt(this.subgroupPosition);
+        parcel.writeInt(this.disciplinePosition);
+        parcel.writeInt(this.typePosition);
+        parcel.writeInt(this.showPassed ? 1 : 0);
+    }
+
+    public int getSubgroupPosition() {
+        return subgroupPosition;
+    }
+
+    public void setSubgroupPosition(int subgroupPosition) {
+        this.subgroupPosition = subgroupPosition;
+    }
+
+    public int getDisciplinePosition() {
+        return disciplinePosition;
+    }
+
+    public void setDisciplinePosition(int disciplinePosition) {
+        this.disciplinePosition = disciplinePosition;
+    }
+
+    public boolean isShowPassed() {
+        return showPassed;
+    }
+
+    public int getTypePosition() {
+        return typePosition;
+    }
+
+    public void setTypePosition(int typePosition) {
+        this.typePosition = typePosition;
     }
 }
