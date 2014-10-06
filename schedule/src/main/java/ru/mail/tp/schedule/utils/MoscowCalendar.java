@@ -8,6 +8,25 @@ import java.util.TimeZone;
  * date: 30/09/14
  */
 public abstract class MoscowCalendar extends Calendar {
+    private static final String[] weekDays = {"Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"};
+    private static final String[] month = {"января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"};
+
+    public static String getWeekDayTitle(int i) {
+        if (0 <= i && i < weekDays.length) {
+            return weekDays[i];
+        } else {
+            return "";
+        }
+    }
+
+    public static String getMonthTitle(int i) {
+        if (0 <= i && i < month.length) {
+            return month[i];
+        } else {
+            return "";
+        }
+    }
+
     public static synchronized Calendar getInstance() {
         return MoscowCalendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
     }
