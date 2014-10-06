@@ -16,6 +16,7 @@ import ru.mail.tp.schedule.schedule.entities.Place;
 import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
 import ru.mail.tp.schedule.schedule.entities.Subgroup;
 import ru.mail.tp.schedule.schedule.filter.FilterSpinnerItemsContainer;
+import ru.mail.tp.schedule.schedule.filter.IFilterSpinner;
 
 
 /**
@@ -118,6 +119,8 @@ public class ScheduleJSONProcessor {
             return new ScheduleItem(timeStart, timeEnd, title, place);
         } else if (eventType.equals("lesson")) {
             Discipline discipline = this.disciplines.get(item.getString("discipline"));
+            LessonType lessonType = this.lessonTypes.get(item.getString("type"));
+            int number = item.getInt("number");
 
             JSONObject subgroupsIds = item.getJSONObject("subgroups");
             ArrayList<Subgroup> subgroups = new ArrayList<Subgroup>();
@@ -132,23 +135,21 @@ public class ScheduleJSONProcessor {
                 }
             }
 
-            LessonType lessonType = this.lessonTypes.get(item.getString("type"));
-
             Place place = null;
             String auditoriumId = item.getString("auditorium");
             if (!auditoriumId.equals("0")) {
                 place = this.auditoriums.get(auditoriumId);
             }
 
-            return new ScheduleItem(timeStart, timeEnd, place, subgroups, discipline, lessonType);
+            return new ScheduleItem(timeStart, timeEnd, place, null, subgroups, discipline, lessonType, number);
         }
         return null;
     }
 
     public FilterSpinnerItemsContainer getScheduleFiltersData() throws JSONException {
-        ArrayList<Subgroup> subgroups = new ArrayList<Subgroup>(this.subgroups.values());
-        ArrayList<Discipline> disciplines = new ArrayList<Discipline>(this.disciplines.values());
-        ArrayList<LessonType> lessonTypes = new ArrayList<LessonType>(this.lessonTypes.values());
+        ArrayList<IFilterSpinner> subgroups = new ArrayList<IFilterSpinner>(this.subgroups.values());
+        ArrayList<IFilterSpinner> disciplines = new ArrayList<IFilterSpinner>(this.disciplines.values());
+        ArrayList<IFilterSpinner> lessonTypes = new ArrayList<IFilterSpinner>(this.lessonTypes.values());
 
         return new FilterSpinnerItemsContainer(subgroups, disciplines, lessonTypes);
     }

@@ -14,9 +14,6 @@ import ru.mail.tp.schedule.utils.MoscowSimpleDateFormat;
 import ru.mail.tp.schedule.utils.StringHelper;
 
 public class ScheduleItem implements Serializable {
-    private static final String[] weekDays = {"Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"};
-    private static final String[] month = {"января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"};
-
     private static final Comparator<Subgroup> subgroupComparator = new Comparator<Subgroup>() {
         public int compare(Subgroup a, Subgroup b) {
             return a.getTitle().compareTo(b.getTitle());
@@ -27,21 +24,24 @@ public class ScheduleItem implements Serializable {
     private final Date timeEnd;
     private final Type type;
     private final String title;
+    private final int number;
 
     private final Place place;
     private final ArrayList<Subgroup> subgroups;
+    private final ArrayList<Tutor> tutors;
     private final Discipline discipline;
     private final LessonType lessonType;
 
+
     public ScheduleItem(long timeStart, long timeEnd, String title, Place place) {
-        this(Type.EVENT, timeStart, timeEnd, title, place, null, null, null);
+        this(Type.EVENT, timeStart, timeEnd, title, place, null, null, null, null, 0);
     }
 
-    public ScheduleItem(long timeStart, long timeEnd, Place place, ArrayList<Subgroup> subgroups, Discipline discipline, LessonType lessonType) {
-        this(Type.LESSON, timeStart, timeEnd, null, place, subgroups, discipline, lessonType);
+    public ScheduleItem(long timeStart, long timeEnd, Place place, ArrayList<Tutor> tutors, ArrayList<Subgroup> subgroups, Discipline discipline, LessonType lessonType, int number) {
+        this(Type.LESSON, timeStart, timeEnd, null, place, tutors, subgroups, discipline, lessonType, number);
     }
 
-    private ScheduleItem(Type type, long timeStart, long timeEnd, String title, Place place, ArrayList<Subgroup> subgroups, Discipline discipline, LessonType lessonType) {
+    private ScheduleItem(Type type, long timeStart, long timeEnd, String title, Place place, ArrayList<Tutor> tutors, ArrayList<Subgroup> subgroups, Discipline discipline, LessonType lessonType, int number) {
         this.type = type;
         this.timeStart = new Date(timeStart);
         this.timeEnd = new Date(timeEnd);
@@ -60,15 +60,22 @@ public class ScheduleItem implements Serializable {
             this.subgroups = new ArrayList<Subgroup>();
         }
 
+        if (tutors != null) {
+            this.tutors = tutors;
+        } else {
+            this.tutors = new ArrayList<Tutor>();
+        }
+
         this.discipline = discipline;
         this.lessonType = lessonType;
+        this.number = number;
     }
 
     public Date getTimeStart() {
         return this.timeStart;
     }
 
-    Date getTimeEnd() {
+    public Date getTimeEnd() {
         return this.timeEnd;
     }
 
@@ -77,6 +84,14 @@ public class ScheduleItem implements Serializable {
             return this.title;
         } else {
             return this.discipline.getTitle();
+        }
+    }
+
+    public String getShortTitle() {
+        if (this.type == Type.EVENT) {
+            return this.title;
+        } else {
+            return this.discipline.getShortTitle();
         }
     }
 
@@ -96,6 +111,14 @@ public class ScheduleItem implements Serializable {
         return this.subgroups;
     }
 
+    public ArrayList<Tutor> getTutors() {
+        return tutors;
+    }
+
+    public int getNumber() {
+        return this.number;
+    }
+
     Place getPlace() {
         return this.place;
     }
@@ -113,20 +136,11 @@ public class ScheduleItem implements Serializable {
         return calendar.getTimeInMillis();
     }
 
-    long getDayEnd() {
-        Calendar calendar = MoscowCalendar.getInstance();
-
-        calendar.setTimeInMillis(this.getTimeEnd().getTime());
-        MoscowCalendar.resetTime(calendar);
-
-        return calendar.getTimeInMillis();
-    }
-
     public String getDate() {
         Calendar calendar = MoscowCalendar.getInstance();
         calendar.setTimeInMillis(this.getTimeStart().getTime());
 
-        return weekDays[calendar.get(Calendar.DAY_OF_WEEK) - 2] + ", " + calendar.get(Calendar.DAY_OF_MONTH) + " " + month[calendar.get(Calendar.MONTH)];
+        return MoscowCalendar.getWeekDayTitle(calendar.get(Calendar.DAY_OF_WEEK) - 2) + ", " + calendar.get(Calendar.DAY_OF_MONTH) + " " + MoscowCalendar.getMonthTitle(calendar.get(Calendar.MONTH));
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -142,7 +156,7 @@ public class ScheduleItem implements Serializable {
     public String getSubtitle() {
         if (this.getType() == Type.LESSON) {
             StringBuilder result = new StringBuilder();
-            result.append(this.getLessonType().getTitle());
+            result.append(this.getLessonType().getTitle()).append(" ").append(this.getNumber());
             result.append("\n");
             for (int i = 0; i < this.getSubgroups().size(); i++) {
                 result.append(this.getSubgroups().get(i).getTitle());
@@ -185,6 +199,4 @@ public class ScheduleItem implements Serializable {
         }
         return true;
     }
-
-
 }

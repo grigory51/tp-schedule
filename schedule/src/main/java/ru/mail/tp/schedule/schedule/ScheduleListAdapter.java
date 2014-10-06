@@ -49,7 +49,7 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
             holder.showLocation();
         }
 
-        if (currentScheduleItem.getSubtitle().equals("")) {
+        if (true || currentScheduleItem.getSubtitle().equals("")) {
             holder.hideSubtitle();
         } else {
             holder.showSubtitle();
@@ -107,7 +107,7 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
         public void fill(ScheduleItem item) {
             this.timeStart.setText(item.getFormatTimeStart("HH:mm"));
             this.timeEnd.setText(item.getFormatTimeEnd("HH:mm"));
-            this.title.setText(item.getTitle());
+            this.title.setText(item.getShortTitle());
             this.subtitle.setText(item.getSubtitle());
             this.locationTitle.setText(item.getLocation());
             this.date.setText(item.getDate());
