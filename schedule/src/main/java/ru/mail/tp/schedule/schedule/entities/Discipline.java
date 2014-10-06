@@ -1,14 +1,16 @@
 package ru.mail.tp.schedule.schedule.entities;
 
-import ru.mail.tp.schedule.schedule.filter.FilterSpinner;
+import ru.mail.tp.schedule.schedule.filter.IFilterSpinner;
 import ru.mail.tp.schedule.utils.StringHelper;
 
 /**
  * author: grigory51
  * date: 28/09/14
  */
-public class Discipline extends FilterSpinner {
+public class Discipline implements IFilterSpinner {
     private final String shortTitle;
+    private int id;
+    private String title;
 
     public Discipline(int id, String title) {
         this(id, title, "");
@@ -19,7 +21,8 @@ public class Discipline extends FilterSpinner {
     }
 
     private Discipline(int id, String title, String shortTitle) {
-        super(id, title);
+        this.id = id;
+        this.title = StringHelper.quotesFormat(title);
         this.shortTitle = StringHelper.quotesFormat(shortTitle);
     }
 
@@ -28,7 +31,16 @@ public class Discipline extends FilterSpinner {
     }
 
     @Override
-    public String toString() {
+    public int getId() {
+        return this.id;
+    }
+
+    @Override
+    public String getFilterTitle() {
         return !this.getShortTitle().equals("") ? this.getShortTitle() : this.getTitle();
+    }
+
+    public String getTitle() {
+        return this.title;
     }
 }

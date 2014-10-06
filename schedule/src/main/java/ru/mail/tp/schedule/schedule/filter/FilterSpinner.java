@@ -2,35 +2,23 @@ package ru.mail.tp.schedule.schedule.filter;
 
 import java.io.Serializable;
 
-import ru.mail.tp.schedule.utils.StringHelper;
-
 /**
  * author: grigory51
- * date: 03/10/14
+ * date: 06/10/14
  */
 public class FilterSpinner implements Serializable {
-    private int id;
-    private String title;
+    private IFilterSpinner item;
 
-    protected FilterSpinner(String id, String title) {
-        this(Integer.parseInt(id), title);
-    }
-
-    protected FilterSpinner(int id, String title) {
-        this.id = id;
-        this.title = StringHelper.quotesFormat(title);
+    public FilterSpinner(IFilterSpinner item) {
+        this.item = item;
     }
 
     public int getId() {
-        return this.id;
-    }
-
-    public String getTitle() {
-        return this.title;
+        return item.getId();
     }
 
     @Override
     public String toString() {
-        return this.getTitle();
+        return item.getFilterTitle();
     }
 }
