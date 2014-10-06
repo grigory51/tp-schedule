@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import ru.mail.tp.schedule.R;
 import ru.mail.tp.schedule.schedule.ScheduleBuilder;
@@ -16,6 +15,8 @@ import ru.mail.tp.schedule.schedule.ScheduleListAdapter;
 import ru.mail.tp.schedule.schedule.filter.ScheduleFilter;
 
 public class ScheduleListFragment extends Fragment implements AdapterView.OnItemClickListener {
+    OnScheduleItemClick onScheduleItemClickListener = null;
+
     ListView scheduleListView;
     ScheduleBuilder scheduleBuilder;
     ScheduleFilter filter = new ScheduleFilter();
@@ -51,7 +52,7 @@ public class ScheduleListFragment extends Fragment implements AdapterView.OnItem
 
         if (this.scheduleBuilder != null) {
             this.scheduleListView.setAdapter(new ScheduleListAdapter(this.getActivity(), this.scheduleBuilder.getScheduleItems(this.filter)));
-         //   this.scheduleListView.setOnItemClickListener(this);
+            this.scheduleListView.setOnItemClickListener(this);
         }
 
         return view;
@@ -67,6 +68,10 @@ public class ScheduleListFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        try {
+            this.onScheduleItemClickListener = (OnScheduleItemClick) activity;
+        } catch (ClassCastException ignore) {
+        }
     }
 
     @Override
@@ -76,6 +81,9 @@ public class ScheduleListFragment extends Fragment implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Toast.makeText(this.getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
+        if (this.onScheduleItemClickListener != null) {
+            ScheduleListAdapter adapter = (ScheduleListAdapter) adapterView.getAdapter();
+            this.onScheduleItemClickListener.onScheduleItemClick(adapter.getItem(i));
+        }
     }
 }
