@@ -37,7 +37,7 @@ import ru.mail.tp.schedule.tasks.scheduleFetch.ScheduleFetchTaskResult;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 import ru.mail.tp.schedule.utils.MoscowSimpleDateFormat;
 
-public class ScheduleActivity extends SherlockFragmentActivity implements OnClickListener {
+public class ScheduleActivity extends SherlockFragmentActivity implements OnClickListener, OnScheduleItemClick {
     private static final String CACHE_NAME = "ScheduleCache.txt";
     private FilterSpinnerItemsContainer filterSpinnerItemsContainer = null;
     private ScheduleCache cache = null;
@@ -249,5 +249,20 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
             }
         }
         return this.cache;
+    }
+    @Override
+    public void onScheduleItemClick(ScheduleItem scheduleItem) {
+        Bundle arguments = new Bundle();
+        arguments.putSerializable("scheduleItem", scheduleItem);
+
+        ScheduleDetailFragment scheduleDetailFragment = new ScheduleDetailFragment();
+        scheduleDetailFragment.setArguments(arguments);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.animator.slide_in_left, R.animator.exit_to_left, R.animator.slide_in_left, R.animator.exit_to_left)
+                .replace(R.id.frameLayout, scheduleDetailFragment)
+                .addToBackStack("tag")
+                .commit();
     }
 }
