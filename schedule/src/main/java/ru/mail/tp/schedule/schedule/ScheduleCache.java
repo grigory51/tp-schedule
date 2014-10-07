@@ -3,6 +3,7 @@ package ru.mail.tp.schedule.schedule;
 import java.io.Serializable;
 import java.util.Date;
 
+import ru.mail.tp.schedule.schedule.filter.FilterSpinnerItemsContainer;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 
 /**

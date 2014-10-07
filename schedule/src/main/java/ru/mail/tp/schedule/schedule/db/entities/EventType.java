@@ -1,4 +1,4 @@
-package ru.mail.tp.schedule.schedule.entities;
+package ru.mail.tp.schedule.schedule.db.entities;
 
 import java.io.Serializable;
 
@@ -6,6 +6,6 @@ import java.io.Serializable;
  * author: grigory51
  * date: 28/09/14
  */
-public enum Type implements Serializable {
+public enum EventType implements Serializable {
     EVENT, LESSON
 }

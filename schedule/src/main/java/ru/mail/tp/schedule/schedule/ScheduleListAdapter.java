@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -12,8 +13,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import ru.mail.tp.schedule.R;
-import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
-import ru.mail.tp.schedule.schedule.entities.Type;
+import ru.mail.tp.schedule.schedule.db.entities.EventType;
+import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
 
 public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
     private final Activity context;
@@ -42,13 +43,19 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
 
         holder.fill(currentScheduleItem);
 
-        if (currentScheduleItem.getSubtitle().equals("")) {
+        if (currentScheduleItem.getPlaceTitle().equals("")) {
+            holder.hideLocation();
+        } else {
+            holder.showLocation();
+        }
+
+        if (currentScheduleItem.getSubgroupsList().equals("")) {
             holder.hideSubtitle();
-        } else  {
+        } else {
             holder.showSubtitle();
         }
 
-        if (currentScheduleItem.getType() == Type.EVENT) {
+        if (currentScheduleItem.getEventType() == EventType.EVENT) {
             holder.setAsEvent();
         } else {
             holder.setAsNotEvent();
@@ -79,9 +86,10 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
         private TextView today;
         private TableRow dateRow;
         private RelativeLayout tableRowScheduleContent;
+        private LinearLayout locationTitleContainer;
 
         public void init(View rowView) {
-            this.tableRowScheduleContent = (RelativeLayout) rowView.findViewById(R.id.tableRowScheduleContent);
+            this.tableRowScheduleContent = (RelativeLayout) rowView.findViewById(R.id.tableRowSchedule);
             this.timeStart = (TextView) rowView.findViewById(R.id.timeStartTextView);
             this.timeEnd = (TextView) rowView.findViewById(R.id.timeEndTextView);
 
@@ -92,14 +100,16 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
             this.date = (TextView) rowView.findViewById(R.id.dateTextView);
             this.dateRow = (TableRow) rowView.findViewById(R.id.dateRow);
             this.today = (TextView) rowView.findViewById(R.id.todayTextView);
+
+            this.locationTitleContainer = (LinearLayout) rowView.findViewById(R.id.locationTitleContainer);
         }
 
         public void fill(ScheduleItem item) {
             this.timeStart.setText(item.getFormatTimeStart("HH:mm"));
             this.timeEnd.setText(item.getFormatTimeEnd("HH:mm"));
-            this.title.setText(item.getTitle());
-            this.subtitle.setText(item.getSubtitle());
-            this.locationTitle.setText(item.getLocation());
+            this.title.setText(item.getShortTitle());
+            this.subtitle.setText(item.getSubgroupsList());
+            this.locationTitle.setText(item.getPlaceTitle());
             this.date.setText(item.getDate());
         }
 
@@ -108,7 +118,7 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
         }
 
         public void setAsNotEvent() {
-            this.tableRowScheduleContent.setBackgroundColor(0xFFFFFFFF);
+            this.tableRowScheduleContent.setBackgroundColor(0x00FFFFFF);
         }
 
         public void hideDateBar() {
@@ -133,6 +143,14 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
 
         public void showTodayTitle() {
             this.today.setVisibility(View.VISIBLE);
+        }
+
+        public void hideLocation() {
+            this.locationTitleContainer.setVisibility(View.GONE);
+        }
+
+        public void showLocation() {
+            this.locationTitleContainer.setVisibility(View.VISIBLE);
         }
     }
 }
