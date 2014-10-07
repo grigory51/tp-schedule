@@ -15,6 +15,11 @@ public class FilterArrayAdapter extends ArrayAdapter<FilterSpinner> {
         this.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     }
 
+    public FilterArrayAdapter(Context context, FilterSpinnerList list) {
+        this(context);
+        this.addAll(list);
+    }
+
     public void addAll(ArrayList<FilterSpinner> list) {
         for (FilterSpinner item : list) {
             this.add(item);
