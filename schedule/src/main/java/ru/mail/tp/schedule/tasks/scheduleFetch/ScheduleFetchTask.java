@@ -1,5 +1,7 @@
 package ru.mail.tp.schedule.tasks.scheduleFetch;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -11,8 +13,13 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import ru.mail.tp.schedule.schedule.ScheduleBuilder;
 import ru.mail.tp.schedule.schedule.ScheduleJSONProcessor;
+import ru.mail.tp.schedule.schedule.db.DBHelper;
+import ru.mail.tp.schedule.schedule.db.entities.Discipline;
+import ru.mail.tp.schedule.schedule.db.entities.LessonType;
+import ru.mail.tp.schedule.schedule.db.entities.Place;
+import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
+import ru.mail.tp.schedule.schedule.db.entities.Subgroup;
 import ru.mail.tp.schedule.tasks.ITaskResultReceiver;
 import ru.mail.tp.schedule.tasks.Task;
 import ru.mail.tp.schedule.tasks.TaskResult;
@@ -23,11 +30,17 @@ import ru.mail.tp.schedule.tasks.TaskResult;
  */
 public class ScheduleFetchTask extends Task {
     private final String url;
+    private final Context context;
     private final ITaskResultReceiver receiver;
 
-    public ScheduleFetchTask(ITaskResultReceiver receiver, String url) {
+    private ScheduleFetchTask(Context context, ITaskResultReceiver receiver, String url) {
         this.url = url;
+        this.context = context;
         this.receiver = receiver;
+    }
+
+    public ScheduleFetchTask(Context context, String url) {
+        this(context, (ITaskResultReceiver) context, url);
     }
 
     private String getRawData() throws IOException {
@@ -56,10 +69,32 @@ public class ScheduleFetchTask extends Task {
     protected TaskResult doInBackground(Void... params) {
         String LOG_TAG = "ScheduleFetchTask";
         try {
-            String data = this.getRawData();
-            JSONObject json = new JSONObject(data);
+            JSONObject json = new JSONObject(this.getRawData());
             ScheduleJSONProcessor processor = new ScheduleJSONProcessor(json);
-            return new ScheduleFetchTaskResult(ScheduleFetchTaskResult.STATUS_OK, new ScheduleBuilder(processor.getScheduleItems()), processor.getScheduleFiltersData());
+            DBHelper dbHelper = new DBHelper(this.context);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            db.beginTransaction();
+
+            for (Discipline discipline : processor.getDisciplines()) {
+                discipline.replace(db);
+            }
+            for (LessonType lessonType : processor.getLessonTypes()) {
+                lessonType.replace(db);
+            }
+            for (Place place : processor.getPlaces()) {
+                place.replace(db);
+            }
+            for (Subgroup subgroup : processor.getSubgroups()) {
+                subgroup.replace(db);
+            }
+            for (ScheduleItem item : processor.getScheduleItems()) {
+                item.replace(db);
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            db.close();
+            return new ScheduleFetchTaskResult(ScheduleFetchTaskResult.STATUS_OK);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Ошибка сети");
             e.printStackTrace();
