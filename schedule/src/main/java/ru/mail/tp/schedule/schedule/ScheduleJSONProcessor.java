@@ -10,13 +10,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import ru.mail.tp.schedule.schedule.entities.Discipline;
-import ru.mail.tp.schedule.schedule.entities.LessonType;
-import ru.mail.tp.schedule.schedule.entities.Place;
-import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
-import ru.mail.tp.schedule.schedule.entities.Subgroup;
-import ru.mail.tp.schedule.schedule.filter.FilterSpinnerItemsContainer;
-import ru.mail.tp.schedule.schedule.filter.IFilterSpinner;
+import ru.mail.tp.schedule.schedule.db.entities.Discipline;
+import ru.mail.tp.schedule.schedule.db.entities.LessonType;
+import ru.mail.tp.schedule.schedule.db.entities.Place;
+import ru.mail.tp.schedule.schedule.db.entities.PlaceType;
+import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
+import ru.mail.tp.schedule.schedule.db.entities.Subgroup;
+import ru.mail.tp.schedule.utils.StringHelper;
 
 
 /**
@@ -24,13 +24,12 @@ import ru.mail.tp.schedule.schedule.filter.IFilterSpinner;
  * date: 04.07.14
  */
 public class ScheduleJSONProcessor {
-    HashMap<String, Place> auditoriums = new HashMap<String, Place>();
-    HashMap<String, Place> places = new HashMap<String, Place>();
+    private final HashMap<String, Place> auditoriums = new HashMap<String, Place>();
+    private final HashMap<String, Place> places = new HashMap<String, Place>();
 
-    HashMap<String, Subgroup> subgroups = new HashMap<String, Subgroup>();
-    HashMap<String, Discipline> disciplines = new HashMap<String, Discipline>();
-    HashMap<String, LessonType> lessonTypes = new HashMap<String, LessonType>();
-
+    private final HashMap<String, Subgroup> subgroups = new HashMap<String, Subgroup>();
+    private final HashMap<String, Discipline> disciplines = new HashMap<String, Discipline>();
+    private final HashMap<String, LessonType> lessonTypes = new HashMap<String, LessonType>();
 
     private JSONObject timetable;
 
@@ -42,17 +41,16 @@ public class ScheduleJSONProcessor {
         JSONObject subgroups = json.getJSONObject("groups");
         JSONObject disciplines = json.getJSONObject("disciplines");
 
-
         keys = auditoriums.keys();
         while (keys.hasNext()) {
             String key = (String) keys.next();
-            this.auditoriums.put(key, new Place(auditoriums.getString(key)));
+            this.auditoriums.put(key, new Place(key, PlaceType.AUDITORY, auditoriums.getString(key)));
         }
 
         keys = places.keys();
         while (keys.hasNext()) {
             String key = (String) keys.next();
-            this.places.put(key, new Place(places.getString(key)));
+            this.places.put(key, new Place(key, PlaceType.PLACE, places.getString(key)));
         }
 
         keys = types.keys();
@@ -71,7 +69,11 @@ public class ScheduleJSONProcessor {
         while (keys.hasNext()) {
             String key = (String) keys.next();
             JSONObject discipline = disciplines.getJSONObject(key);
-            this.disciplines.put(key, new Discipline(key, discipline.getString("long_name"), discipline.getString("short_name")));
+            this.disciplines.put(key, new Discipline(
+                    key,
+                    StringHelper.quotesFormat(discipline.getString("long_name")),
+                    StringHelper.quotesFormat(discipline.getString("short_name"))
+            ));
         }
 
         this.timetable = json.getJSONObject("timetable");
@@ -101,6 +103,7 @@ public class ScheduleJSONProcessor {
     }
 
     private ScheduleItem getScheduleItemFromJSON(JSONObject item) throws JSONException {
+        int id = item.getInt("id");
         long timeStart = item.getLong("time_start");
         long timeEnd = item.getLong("time_end");
         String title;
@@ -116,7 +119,7 @@ public class ScheduleJSONProcessor {
             } else if (!auditoriumId.equals("0")) {
                 place = this.auditoriums.get(auditoriumId);
             }
-            return new ScheduleItem(timeStart, timeEnd, title, place);
+            return new ScheduleItem(id, timeStart, timeEnd, title, place);
         } else if (eventType.equals("lesson")) {
             Discipline discipline = this.disciplines.get(item.getString("discipline"));
             LessonType lessonType = this.lessonTypes.get(item.getString("type"));
@@ -141,16 +144,30 @@ public class ScheduleJSONProcessor {
                 place = this.auditoriums.get(auditoriumId);
             }
 
-            return new ScheduleItem(timeStart, timeEnd, place, null, subgroups, discipline, lessonType, number);
+            return new ScheduleItem(id, timeStart, timeEnd, place, subgroups, discipline, lessonType, number);
         }
         return null;
     }
 
-    public FilterSpinnerItemsContainer getScheduleFiltersData() throws JSONException {
-        ArrayList<IFilterSpinner> subgroups = new ArrayList<IFilterSpinner>(this.subgroups.values());
-        ArrayList<IFilterSpinner> disciplines = new ArrayList<IFilterSpinner>(this.disciplines.values());
-        ArrayList<IFilterSpinner> lessonTypes = new ArrayList<IFilterSpinner>(this.lessonTypes.values());
+    public ArrayList<Place> getPlaces() {
+        final ArrayList<Place> placesList = new ArrayList<Place>(this.places.values());
+        final ArrayList<Place> auditoriumList = new ArrayList<Place>(this.auditoriums.values());
 
-        return new FilterSpinnerItemsContainer(subgroups, disciplines, lessonTypes);
+        return new ArrayList<Place>() {{
+            addAll(placesList);
+            addAll(auditoriumList);
+        }};
+    }
+
+    public ArrayList<Subgroup> getSubgroups() {
+        return new ArrayList<Subgroup>(this.subgroups.values());
+    }
+
+    public ArrayList<Discipline> getDisciplines() {
+        return new ArrayList<Discipline>(this.disciplines.values());
+    }
+
+    public ArrayList<LessonType> getLessonTypes() {
+        return new ArrayList<LessonType>(this.lessonTypes.values());
     }
 }
