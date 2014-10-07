@@ -12,14 +12,15 @@ import android.widget.ListView;
 import ru.mail.tp.schedule.R;
 import ru.mail.tp.schedule.schedule.ScheduleBuilder;
 import ru.mail.tp.schedule.schedule.ScheduleListAdapter;
+import ru.mail.tp.schedule.schedule.db.DBHelper;
 import ru.mail.tp.schedule.schedule.filter.ScheduleFilter;
 
 public class ScheduleListFragment extends Fragment implements AdapterView.OnItemClickListener {
-    OnScheduleItemClick onScheduleItemClickListener = null;
+    private OnScheduleItemClick onScheduleItemClickListener = null;
 
-    ListView scheduleListView;
-    ScheduleBuilder scheduleBuilder;
-    ScheduleFilter filter = new ScheduleFilter();
+    private ListView scheduleListView;
+    private ScheduleBuilder scheduleBuilder;
+    private ScheduleFilter filter = new ScheduleFilter();
 
     public ScheduleListFragment() {
 
@@ -28,13 +29,11 @@ public class ScheduleListFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Bundle arguments = this.getArguments();
-        if (arguments != null) {
-            this.scheduleBuilder = (ScheduleBuilder) arguments.getSerializable("scheduleBuilder");
-        }
-
-        if (savedInstanceState != null) {
+        if (savedInstanceState == null) {
+            DBHelper dbHelper = new DBHelper(getActivity());
+            this.scheduleBuilder = new ScheduleBuilder(dbHelper.getScheduleItems());
+        } else {
+            this.scheduleBuilder = (ScheduleBuilder) savedInstanceState.get("scheduleBuilder");
             this.filter = (ScheduleFilter) savedInstanceState.get("scheduleFilter");
         }
     }
@@ -43,6 +42,7 @@ public class ScheduleListFragment extends Fragment implements AdapterView.OnItem
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("scheduleFilter", this.filter);
+        outState.putSerializable("scheduleBuilder", this.scheduleBuilder);
     }
 
     @Override
@@ -72,11 +72,6 @@ public class ScheduleListFragment extends Fragment implements AdapterView.OnItem
             this.onScheduleItemClickListener = (OnScheduleItemClick) activity;
         } catch (ClassCastException ignore) {
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     @Override
