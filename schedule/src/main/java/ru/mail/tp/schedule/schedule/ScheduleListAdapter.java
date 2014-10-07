@@ -13,8 +13,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import ru.mail.tp.schedule.R;
-import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
-import ru.mail.tp.schedule.schedule.entities.Type;
+import ru.mail.tp.schedule.schedule.db.entities.EventType;
+import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
 
 public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
     private final Activity context;
@@ -43,19 +43,19 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
 
         holder.fill(currentScheduleItem);
 
-        if (currentScheduleItem.getLocation().equals("")) {
+        if (currentScheduleItem.getPlaceTitle().equals("")) {
             holder.hideLocation();
         } else {
             holder.showLocation();
         }
 
-        if (true || currentScheduleItem.getSubtitle().equals("")) {
+        if (currentScheduleItem.getSubgroupsList().equals("")) {
             holder.hideSubtitle();
         } else {
             holder.showSubtitle();
         }
 
-        if (currentScheduleItem.getType() == Type.EVENT) {
+        if (currentScheduleItem.getEventType() == EventType.EVENT) {
             holder.setAsEvent();
         } else {
             holder.setAsNotEvent();
@@ -108,8 +108,8 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
             this.timeStart.setText(item.getFormatTimeStart("HH:mm"));
             this.timeEnd.setText(item.getFormatTimeEnd("HH:mm"));
             this.title.setText(item.getShortTitle());
-            this.subtitle.setText(item.getSubtitle());
-            this.locationTitle.setText(item.getLocation());
+            this.subtitle.setText(item.getSubgroupsList());
+            this.locationTitle.setText(item.getPlaceTitle());
             this.date.setText(item.getDate());
         }
 

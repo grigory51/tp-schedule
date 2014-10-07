@@ -1,6 +1,5 @@
 package ru.mail.tp.schedule.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,11 +16,11 @@ import android.widget.TextView;
 import java.util.Calendar;
 
 import ru.mail.tp.schedule.R;
-import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
+import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 
 public class ScheduleDetailFragment extends Fragment implements OnClickListener {
-    ScheduleItem scheduleItem = null;
+    private ScheduleItem scheduleItem = null;
 
     public ScheduleDetailFragment() {
     }
@@ -73,18 +72,6 @@ public class ScheduleDetailFragment extends Fragment implements OnClickListener 
         return view;
     }
 
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     @Override
     public void onClick(View view) {
         if (Build.VERSION.SDK_INT >= 14) {
@@ -93,7 +80,7 @@ public class ScheduleDetailFragment extends Fragment implements OnClickListener 
 
                 calendarIntent.setData(CalendarContract.Events.CONTENT_URI);
                 calendarIntent.putExtra(CalendarContract.Events.TITLE, this.scheduleItem.getTitle());
-                calendarIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, "Технопарк, " + this.scheduleItem.getLocation());
+                calendarIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, "Технопарк, " + this.scheduleItem.getPlace().getTitle());
                 calendarIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, this.scheduleItem.getTimeStart().getTime());
                 calendarIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, this.scheduleItem.getTimeEnd().getTime());
 

@@ -3,7 +3,7 @@ package ru.mail.tp.schedule.schedule;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
+import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
 import ru.mail.tp.schedule.schedule.filter.ScheduleFilter;
 
 /**
@@ -15,10 +15,6 @@ public class ScheduleBuilder implements Serializable {
 
     public ScheduleBuilder(ArrayList<ScheduleItem> list) {
         this.list = list;
-    }
-
-    public ArrayList<ScheduleItem> getScheduleItems() {
-        return this.getScheduleItems(new ScheduleFilter());
     }
 
     public ArrayList<ScheduleItem> getScheduleItems(ScheduleFilter filter) {

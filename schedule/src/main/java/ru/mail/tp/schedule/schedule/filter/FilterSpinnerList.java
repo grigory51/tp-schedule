@@ -6,12 +6,8 @@ import java.util.ArrayList;
  * author: grigory51
  * date: 06/10/14
  */
-public class FilterSpinnerList extends ArrayList<FilterSpinner> {
-    public static FilterSpinnerList createFromArrayList(ArrayList<IFilterSpinner> list) {
-        FilterSpinnerList result = new FilterSpinnerList();
-        for(IFilterSpinner item:list) {
-            result.add(new FilterSpinner(item));
-        }
-        return result;
+class FilterSpinnerList extends ArrayList<FilterSpinner> {
+    public void add(IFilterSpinner item) {
+        this.add(new FilterSpinner(item));
     }
 }

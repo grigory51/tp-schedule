@@ -7,7 +7,7 @@ import java.io.Serializable;
  * date: 06/10/14
  */
 public class FilterSpinner implements Serializable {
-    private IFilterSpinner item;
+    private final IFilterSpinner item;
 
     public FilterSpinner(IFilterSpinner item) {
         this.item = item;

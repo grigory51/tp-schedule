@@ -1,6 +1,6 @@
 package ru.mail.tp.schedule.fragments;
 
-import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
+import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
 
 /**
  * author: grigory51
