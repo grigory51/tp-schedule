@@ -1,65 +1,57 @@
 package ru.mail.tp.schedule.schedule.filter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
-import ru.mail.tp.schedule.schedule.entities.Discipline;
-import ru.mail.tp.schedule.schedule.entities.LessonType;
-import ru.mail.tp.schedule.schedule.entities.Subgroup;
+import ru.mail.tp.schedule.schedule.db.DBHelper;
+import ru.mail.tp.schedule.schedule.db.entities.Discipline;
+import ru.mail.tp.schedule.schedule.db.entities.LessonType;
+import ru.mail.tp.schedule.schedule.db.entities.Subgroup;
 
 public class FilterSpinnerItemsContainer implements Serializable {
-    private FilterSpinnerList subgroupItems;
-    private FilterSpinnerList disciplineItems;
-    private FilterSpinnerList lessonTypeItems;
+    private final FilterSpinnerList subgroupItems;
+    private final FilterSpinnerList disciplineItems;
+    private final FilterSpinnerList lessonTypeItems;
 
     private int subgroupPosition, disciplinePosition, lessonTypePosition;
     private boolean showPassed;
 
-    public FilterSpinnerItemsContainer(ArrayList<IFilterSpinner> subgroupItems, ArrayList<IFilterSpinner> disciplineItems, ArrayList<IFilterSpinner> lessonTypeItems) {
-        Comparator<FilterSpinner> comparator = new Comparator<FilterSpinner>() {
-            public int compare(FilterSpinner a, FilterSpinner b) {
-                if (a.getId() == 0) {
-                    return -1;
-                }
-                if (b.getId() == 0) {
-                    return 1;
-                }
-                return a.toString().compareTo(b.toString());
-            }
-        };
-
-        this.subgroupItems = FilterSpinnerList.createFromArrayList(subgroupItems);
-        this.disciplineItems = FilterSpinnerList.createFromArrayList(disciplineItems);
-        this.lessonTypeItems = FilterSpinnerList.createFromArrayList(lessonTypeItems);
+    public FilterSpinnerItemsContainer(DBHelper db) {
+        this.subgroupItems = new FilterSpinnerList();
+        this.disciplineItems = new FilterSpinnerList();
+        this.lessonTypeItems = new FilterSpinnerList();
 
         this.subgroupItems.add(new FilterSpinner(new Subgroup(0, "Все")));
         this.disciplineItems.add(new FilterSpinner(new Discipline(0, "Все")));
         this.lessonTypeItems.add(new FilterSpinner(new LessonType(0, "Все")));
 
-        Collections.sort(this.subgroupItems, comparator);
-        Collections.sort(this.disciplineItems, comparator);
-        Collections.sort(this.lessonTypeItems, comparator);
+        for (Subgroup item : db.getSubgroups()) {
+            this.subgroupItems.add(item);
+        }
+        for (Discipline item : db.getDisciplines()) {
+            this.disciplineItems.add(item);
+        }
+        for (LessonType item : db.getLessonTypes()) {
+            this.lessonTypeItems.add(item);
+        }
 
         this.subgroupPosition = this.disciplinePosition = this.lessonTypePosition = 0;
         this.showPassed = false;
     }
 
-    public ArrayList<FilterSpinner> getSubgroupItems() {
+    public FilterSpinnerList getSubgroupItems() {
         return this.subgroupItems;
     }
 
-    public ArrayList<FilterSpinner> getDisciplineItems() {
+    public FilterSpinnerList getDisciplineItems() {
         return this.disciplineItems;
     }
 
-    public ArrayList<FilterSpinner> getLessonTypeItems() {
+    public FilterSpinnerList getLessonTypeItems() {
         return this.lessonTypeItems;
     }
 
     public int getSubgroupPosition() {
-        return subgroupPosition;
+        return this.subgroupPosition;
     }
 
     public void setSubgroupPosition(int subgroupPosition) {
@@ -67,7 +59,7 @@ public class FilterSpinnerItemsContainer implements Serializable {
     }
 
     public int getDisciplinePosition() {
-        return disciplinePosition;
+        return this.disciplinePosition;
     }
 
     public void setDisciplinePosition(int disciplinePosition) {
@@ -82,7 +74,7 @@ public class FilterSpinnerItemsContainer implements Serializable {
         this.lessonTypePosition = lessonTypePosition;
     }
 
-    public boolean isShowPassed() {
+    public boolean getShowPassed() {
         return this.showPassed;
     }
 
