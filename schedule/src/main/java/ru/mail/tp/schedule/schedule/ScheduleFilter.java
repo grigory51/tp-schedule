@@ -1,4 +1,4 @@
-package ru.mail.tp.schedule.schedule.filter;
+package ru.mail.tp.schedule.schedule;
 
 import java.io.Serializable;
 
@@ -35,7 +35,7 @@ public class ScheduleFilter implements Serializable {
         return this.lessonTypeId;
     }
 
-    public boolean isShowPassed() {
+    public boolean getShowPassed() {
         return this.showPassed;
     }
 }
