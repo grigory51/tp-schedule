@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
-import ru.mail.tp.schedule.schedule.filter.ScheduleFilter;
+import ru.mail.tp.schedule.schedule.ScheduleFilter;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 import ru.mail.tp.schedule.utils.MoscowSimpleDateFormat;
 
@@ -210,7 +210,7 @@ public class ScheduleItem extends BaseEntity implements Serializable {
     }
 
     public boolean isFilterMatch(ScheduleFilter filter) {
-        if (!filter.isShowPassed() && MoscowCalendar.getTodayInstance().getTimeInMillis() > this.getDayStart()) {
+        if (!filter.getShowPassed() && MoscowCalendar.getTodayInstance().getTimeInMillis() > this.getDayStart()) {
             return false;
         }
         if (filter.getDisciplineId() != 0 && (this.getDiscipline() == null || this.getDiscipline().getId() != filter.getDisciplineId())) {
