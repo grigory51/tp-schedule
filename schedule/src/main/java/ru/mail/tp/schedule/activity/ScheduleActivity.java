@@ -1,11 +1,14 @@
 package ru.mail.tp.schedule.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,24 +29,26 @@ import ru.mail.tp.schedule.fragments.OnScheduleItemClick;
 import ru.mail.tp.schedule.fragments.ScheduleDetailFragment;
 import ru.mail.tp.schedule.fragments.ScheduleListFragment;
 import ru.mail.tp.schedule.schedule.ScheduleCache;
+import ru.mail.tp.schedule.schedule.ScheduleFilter;
 import ru.mail.tp.schedule.schedule.db.DBHelper;
 import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
 import ru.mail.tp.schedule.schedule.filter.FilterArrayAdapter;
 import ru.mail.tp.schedule.schedule.filter.FilterSpinner;
 import ru.mail.tp.schedule.schedule.filter.FilterSpinnerItemsContainer;
 import ru.mail.tp.schedule.schedule.filter.OnFilterChangeListener;
-import ru.mail.tp.schedule.schedule.filter.ScheduleFilter;
 import ru.mail.tp.schedule.tasks.scheduleFetch.ScheduleFetchTaskResult;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 import ru.mail.tp.schedule.utils.MoscowSimpleDateFormat;
 
-public class ScheduleActivity extends SherlockFragmentActivity implements OnClickListener, OnScheduleItemClick {
+public class ScheduleActivity extends SherlockFragmentActivity implements OnClickListener, OnScheduleItemClick, FragmentManager.OnBackStackChangedListener {
     private static final String CACHE_NAME = "ScheduleCache.txt";
     private Spinner subgroupsSpinner, disciplinesSpinner, typesSpinner;
     private CheckBox showPastCheckBox;
     private FilterSpinnerItemsContainer filterSpinnerItemsContainer = null;
     private ScheduleCache cache = null;
     private SlidingMenu menu;
+
+    private boolean stackNotEmptySemaphore = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +95,10 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
         } else {
             this.filterSpinnerItemsContainer = (FilterSpinnerItemsContainer) savedInstanceState.getSerializable("filterSpinnerItemsContainer");
         }
+
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
+
+        this.initSlideMenu();
         this.initFilters(this.filterSpinnerItemsContainer);
     }
 
@@ -256,5 +265,26 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
                 .replace(R.id.a_schedule__frameLayout, scheduleDetailFragment)
                 .addToBackStack("tag")
                 .commit();
+    }
+
+    private void initSlideMenu() {
+        ImageButton menuButton = (ImageButton) findViewById(R.id.v_actionbar__menuButton);
+        ViewGroup.LayoutParams params = menuButton.getLayoutParams();
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            this.stackNotEmptySemaphore = false;
+            this.menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+            params.width = 300;
+        } else {
+            this.stackNotEmptySemaphore = true;
+            this.menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+            params.width = 200;
+        }
+        menuButton.setLayoutParams(params);
+        menuButton.requestLayout();
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        this.initSlideMenu();
     }
 }
