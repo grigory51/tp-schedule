@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <ImageButton
-        android:id="@+id/menuButton"
+        android:id="@+id/v_actionbar__menuButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onClick"
@@ -16,7 +16,7 @@
 
 
     <ImageButton
-        android:id="@+id/updateScheduleButton"
+        android:id="@+id/v_actionbar__updateScheduleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onClick"
@@ -27,18 +27,15 @@
         android:visibility="gone"/>
 
     <Button
-        android:id="@+id/todayButton"
-        style="?android:attr/imageButtonStyle"
+        android:id="@+id/v_actionbar__todayButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onClick"
         android:text="@string/today"
         android:textSize="12sp"
-        android:layout_toLeftOf="@id/updateScheduleButton"
-        android:layout_alignBottom="@id/updateScheduleButton"
+        android:layout_toLeftOf="@id/v_actionbar__updateScheduleButton"
+        android:layout_alignBottom="@id/v_actionbar__updateScheduleButton"
         android:layout_alignParentTop="true"
         android:visibility="gone"/>
-
-
 
 </RelativeLayout>

@@ -48,7 +48,7 @@ public class ScheduleListFragment extends Fragment implements AdapterView.OnItem
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_schedule_list, container, false);
-        this.scheduleListView = (ListView) view.findViewById(R.id.scheduleListView);
+        this.scheduleListView = (ListView) view.findViewById(R.id.f_schedule_list__scheduleListView);
 
         if (this.scheduleBuilder != null) {
             this.scheduleListView.setAdapter(new ScheduleListAdapter(this.getActivity(), this.scheduleBuilder.getScheduleItems(this.filter)));

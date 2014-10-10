@@ -89,19 +89,19 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
         private LinearLayout locationTitleContainer;
 
         public void init(View rowView) {
-            this.tableRowScheduleContent = (RelativeLayout) rowView.findViewById(R.id.tableRowSchedule);
-            this.timeStart = (TextView) rowView.findViewById(R.id.timeStartTextView);
-            this.timeEnd = (TextView) rowView.findViewById(R.id.timeEndTextView);
+            this.tableRowScheduleContent = (RelativeLayout) rowView.findViewById(R.id.v_row_schedule__tableRowSchedule);
+            this.timeStart = (TextView) rowView.findViewById(R.id.v_row_schedule__timeStartTextView);
+            this.timeEnd = (TextView) rowView.findViewById(R.id.v_row_schedule__timeEndTextView);
 
-            this.title = (TextView) rowView.findViewById(R.id.titleTextView);
-            this.subtitle = (TextView) rowView.findViewById(R.id.subtitleTextView);
-            this.locationTitle = (TextView) rowView.findViewById(R.id.locationTextView);
+            this.title = (TextView) rowView.findViewById(R.id.v_row_schedule__titleTextView);
+            this.subtitle = (TextView) rowView.findViewById(R.id.v_row_schedule__subtitleTextView);
+            this.locationTitle = (TextView) rowView.findViewById(R.id.v_row_schedule__locationTextView);
 
-            this.date = (TextView) rowView.findViewById(R.id.dateTextView);
-            this.dateRow = (TableRow) rowView.findViewById(R.id.dateRow);
-            this.today = (TextView) rowView.findViewById(R.id.todayTextView);
+            this.date = (TextView) rowView.findViewById(R.id.v_row_schedule__dateTextView);
+            this.dateRow = (TableRow) rowView.findViewById(R.id.v_row_schedule__dateRow);
+            this.today = (TextView) rowView.findViewById(R.id.v_row_schedule__todayTextView);
 
-            this.locationTitleContainer = (LinearLayout) rowView.findViewById(R.id.locationTitleContainer);
+            this.locationTitleContainer = (LinearLayout) rowView.findViewById(R.id.v_row_schedule__locationTitleContainer);
         }
 
         public void fill(ScheduleItem item) {

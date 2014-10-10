@@ -3,7 +3,7 @@
 
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tableRowSchedule"
+    android:id="@+id/v_row_schedule__tableRowSchedule"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -12,7 +12,7 @@
     android:paddingBottom="5dp">
 
     <TableRow
-        android:id="@+id/dateRow"
+        android:id="@+id/v_row_schedule__dateRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:baselineAligned="true"
@@ -22,22 +22,25 @@
         android:layout_marginBottom="2dp">
 
         <TextView
-            android:id="@+id/dateTextView"
+            android:id="@+id/v_row_schedule__dateTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.75"
             android:textSize="18sp"
             android:text="22 июня, пятница"
             android:textColor="@android:color/black"
-            android:paddingLeft="5dp"/>
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"/>
+
 
         <TextView
-            android:id="@+id/todayTextView"
+            android:id="@+id/v_row_schedule__todayTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textSize="18sp"
             android:layout_weight="0.25"
             android:text="@string/today"
+            android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:gravity="right"/>
     </TableRow>
@@ -46,8 +49,8 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/timeLayout"
-        android:layout_below="@+id/dateRow"
+        android:id="@+id/v_row_schedule__timeLayout"
+        android:layout_below="@id/v_row_schedule__dateRow"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:paddingLeft="7dp"
@@ -55,74 +58,74 @@
         android:paddingTop="5dp">
 
         <TextView
-            android:id="@+id/timeStartTextView"
+            android:id="@+id/v_row_schedule__timeStartTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:text="18:00"
             android:paddingBottom="2dp"/>
 
+        <TextView
+            android:id="@+id/v_row_schedule__timeEndTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="21:00"
+            android:layout_below="@id/v_row_schedule__timeStartTextView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:paddingTop="0dp"/>
+
         <View
             android:layout_width="fill_parent"
             android:layout_height="2dp"
             android:background="#20000000"
 
-            android:layout_above="@+id/timeEndTextView"
+            android:layout_above="@id/v_row_schedule__timeEndTextView"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignRight="@+id/timeStartTextView"
-            android:layout_alignEnd="@+id/timeStartTextView"
+            android:layout_alignRight="@id/v_row_schedule__timeStartTextView"
+            android:layout_alignEnd="@id/v_row_schedule__timeStartTextView"
             android:paddingTop="1dp"
             android:paddingBottom="1dp"/>
-
-        <TextView
-            android:id="@+id/timeEndTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="21:00"
-            android:layout_below="@+id/timeStartTextView"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:paddingTop="0dp"/>
 
     </RelativeLayout>
 
 
     <TextView
-        android:id="@+id/titleTextView"
+        android:id="@+id/v_row_schedule__titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:text='Тренинг "Механики командной работы"'
         android:textStyle="bold"
-        android:layout_toEndOf="@+id/timeLayout"
-        android:layout_below="@+id/dateRow"
-        android:layout_toRightOf="@+id/timeLayout"
+        android:layout_toEndOf="@id/v_row_schedule__timeLayout"
+        android:layout_below="@id/v_row_schedule__dateRow"
+        android:layout_toRightOf="@id/v_row_schedule__timeLayout"
         style="@style/scheduleItem__title"
         android:paddingTop="5dp"/>
 
     <TextView
-        android:id="@+id/subtitleTextView"
+        android:id="@+id/v_row_schedule__subtitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"
         android:textSize="18sp"
         android:gravity="clip_horizontal"
         android:text="Лекция"
-        android:layout_toEndOf="@+id/timeLayout"
-        android:layout_toRightOf="@+id/timeLayout"
-        android:layout_below="@+id/titleTextView"
+        android:layout_toEndOf="@id/v_row_schedule__timeLayout"
+        android:layout_toRightOf="@id/v_row_schedule__timeLayout"
+        android:layout_below="@id/v_row_schedule__titleTextView"
         style="@style/scheduleItem__title"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/locationTitleContainer"
-        android:layout_toEndOf="@+id/timeLayout"
-        android:layout_toRightOf="@+id/timeLayout"
-        android:layout_below="@+id/subtitleTextView"
+        android:id="@+id/v_row_schedule__locationTitleContainer"
+        android:layout_toEndOf="@id/v_row_schedule__timeLayout"
+        android:layout_toRightOf="@id/v_row_schedule__timeLayout"
+        android:layout_below="@id/v_row_schedule__subtitleTextView"
         style="@style/scheduleItem__title">
 
         <ImageView
@@ -135,7 +138,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="316 ауд."
-            android:id="@+id/locationTextView"
+            android:id="@+id/v_row_schedule__locationTextView"
             android:textSize="18sp"
             android:paddingLeft="4dp"/>
 

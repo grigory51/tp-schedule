@@ -38,11 +38,11 @@ public class ScheduleDetailFragment extends Fragment implements OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_schedule_detail, container, false);
 
-        TextView title = (TextView) view.findViewById(R.id.titleTextView);
-        TextView subtitle = (TextView) view.findViewById(R.id.subtitleTextView);
-        TextView date = (TextView) view.findViewById(R.id.dateTextView);
-        TextView time = (TextView) view.findViewById(R.id.timeTextView);
-        ImageButton addToCalendarButton = (ImageButton) view.findViewById(R.id.addToCalendarButton);
+        TextView title = (TextView) view.findViewById(R.id.f_schedule_detail__titleTextView);
+        TextView subtitle = (TextView) view.findViewById(R.id.f_schedule_detail__subtitleTextView);
+        TextView date = (TextView) view.findViewById(R.id.f_schedule_detail__dateTextView);
+        TextView time = (TextView) view.findViewById(R.id.f_schedule_detail__timeTextView);
+        ImageButton addToCalendarButton = (ImageButton) view.findViewById(R.id.f_schedule_detail__addToCalendarButton);
 
         title.setText(scheduleItem.getTitle());
         if (!scheduleItem.getSubtitle().equals("")) {

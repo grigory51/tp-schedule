@@ -66,9 +66,9 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
         int menuWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.7);
         this.menu.setBehindWidth(menuWidth > 450 ? 450 : menuWidth);
 
-        this.subgroupsSpinner = (Spinner) findViewById(R.id.subgroupsSpinner);
-        this.disciplinesSpinner = (Spinner) findViewById(R.id.disciplinesSpinner);
-        this.typesSpinner = (Spinner) findViewById(R.id.typesSpinner);
+        this.subgroupsSpinner = (Spinner) findViewById(R.id.v_menu__subgroupsSpinner);
+        this.disciplinesSpinner = (Spinner) findViewById(R.id.v_menu__disciplinesSpinner);
+        this.typesSpinner = (Spinner) findViewById(R.id.v_menu__typesSpinner);
         this.showPastCheckBox = (CheckBox) findViewById(R.id.showPastCheckBox);
 
         if (savedInstanceState == null) {
@@ -83,7 +83,7 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.frameLayout, new ScheduleListFragment())
+                    .add(R.id.a_schedule__frameLayout, new ScheduleListFragment())
                     .commit();
 
             this.filterSpinnerItemsContainer = new FilterSpinnerItemsContainer(new DBHelper(this));
@@ -100,7 +100,7 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
     }
 
     private void setLastUpdateDate(Date date) {
-        TextView lastUpdateTextView = (TextView) findViewById(R.id.lastUpdateTextView);
+        TextView lastUpdateTextView = (TextView) findViewById(R.id.v_menu__lastUpdateTextView);
         lastUpdateTextView.setText("Последнее обновление\n" + new MoscowSimpleDateFormat("dd.MM.yyyy в HH:mm").format(date));
     }
 
@@ -210,7 +210,7 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
     private ScheduleListFragment getScheduleListFragment() {
         ScheduleListFragment fragment = null;
         try {
-            fragment = (ScheduleListFragment) getSupportFragmentManager().findFragmentById(R.id.frameLayout);
+            fragment = (ScheduleListFragment) getSupportFragmentManager().findFragmentById(R.id.a_schedule__frameLayout);
         } catch (ClassCastException ignore) {
         }
         return fragment;
@@ -219,7 +219,7 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
     private ScheduleDetailFragment getScheduleDetailFragment() {
         ScheduleDetailFragment fragment = null;
         try {
-            fragment = (ScheduleDetailFragment) getSupportFragmentManager().findFragmentById(R.id.frameLayout);
+            fragment = (ScheduleDetailFragment) getSupportFragmentManager().findFragmentById(R.id.a_schedule__frameLayout);
         } catch (ClassCastException ignore) {
         }
         return fragment;
@@ -228,14 +228,14 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.updateScheduleButton:
+            case R.id.v_actionbar__updateScheduleButton:
                 //todo сделать кнопку обновления расписания
                 break;
-            case R.id.todayButton:
+            case R.id.v_actionbar__todayButton:
                 //todo сделать прокручивание к сегодняшнему дню
                 break;
-            case R.id.menuButton:
-                if (getScheduleListFragment() != null) {
+            case R.id.v_actionbar__menuButton:
+                if (!this.stackNotEmptySemaphore) {
                     this.menu.showMenu();
                 }
                 break;
@@ -253,7 +253,7 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.animator.slide_in_left, R.animator.exit_to_left, R.animator.slide_in_left, R.animator.exit_to_left)
-                .replace(R.id.frameLayout, scheduleDetailFragment)
+                .replace(R.id.a_schedule__frameLayout, scheduleDetailFragment)
                 .addToBackStack("tag")
                 .commit();
     }
