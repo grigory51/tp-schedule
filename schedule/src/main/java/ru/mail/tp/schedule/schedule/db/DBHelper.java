@@ -5,11 +5,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import ru.mail.tp.schedule.schedule.ScheduleFilter;
 import ru.mail.tp.schedule.schedule.db.entities.Discipline;
 import ru.mail.tp.schedule.schedule.db.entities.EventType;
 import ru.mail.tp.schedule.schedule.db.entities.LessonType;
@@ -17,6 +17,7 @@ import ru.mail.tp.schedule.schedule.db.entities.Place;
 import ru.mail.tp.schedule.schedule.db.entities.PlaceType;
 import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
 import ru.mail.tp.schedule.schedule.db.entities.Subgroup;
+import ru.mail.tp.schedule.utils.MoscowCalendar;
 
 
 /**
@@ -139,8 +140,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return result;
     }
 
-
-    public ArrayList<ScheduleItem> getScheduleItems() {
+    public ArrayList<ScheduleItem> getScheduleItems(ScheduleFilter filter) {
         ArrayList<ScheduleItem> result = new ArrayList<ScheduleItem>();
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
@@ -186,7 +186,45 @@ public class DBHelper extends SQLiteOpenHelper {
         queryBuilder.setTables(table);
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = queryBuilder.query(this.getReadableDatabase(), projection, null, null, null, null, order);
+
+        StringBuilder whereCondition = new StringBuilder();
+        ArrayList<String> whereParams = new ArrayList<String>();
+        if (filter != null) {
+            boolean first = true;
+            if (filter.getDisciplineId() != 0) {
+                whereCondition
+                        .append(disciplineTable)
+                        .append(".")
+                        .append(Discipline.COLUMN_NAME_ID.getName()).append(" = ?");
+                whereParams.add(String.valueOf(filter.getDisciplineId()));
+                first = false;
+            }
+            if (filter.getLessonTypeId() != 0) {
+                if (!first) {
+                    whereCondition.append(" AND ");
+                }
+
+                whereCondition
+                        .append(lessonTypeTable)
+                        .append(".")
+                        .append(LessonType.COLUMN_NAME_ID.getName()).append(" = ?");
+                whereParams.add(String.valueOf(filter.getLessonTypeId()));
+                first = false;
+            }
+            if (!filter.getShowPassed()) {
+                if (!first) {
+                    whereCondition.append(" AND ");
+                }
+
+                whereCondition
+                        .append(scheduleItemTable)
+                        .append(".")
+                        .append(ScheduleItem.COLUMN_NAME_TIME_START.getName()).append(" > ?");
+                whereParams.add(String.valueOf(MoscowCalendar.getTodayInstance().getTimeInMillis()));
+            }
+        }
+
+        Cursor cursor = queryBuilder.query(this.getReadableDatabase(), projection, whereCondition.toString(), whereParams.toArray(new String[whereParams.size()]), null, null, order);
 
         if (cursor.moveToFirst()) {
             do {
@@ -220,7 +258,7 @@ public class DBHelper extends SQLiteOpenHelper {
                             new Discipline(cursor.getInt(5), cursor.getString(6), cursor.getString(7)),
                             new LessonType(cursor.getInt(8), cursor.getString(9)),
                             cursor.getInt(10)
-                    );
+                     );
                 }
                 if (item != null) {
                     result.add(item);
