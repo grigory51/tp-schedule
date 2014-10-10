@@ -110,7 +110,7 @@ public class ScheduleJSONProcessor {
 
         String eventType = item.getString("event");
         if (eventType.equals("event")) {
-            title = item.getString("title");
+            title = StringHelper.quotesFormat(item.getString("title"));
             Place place = null;
             String placeId = item.getString("place");
             String auditoriumId = item.getString("auditorium");
