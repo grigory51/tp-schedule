@@ -17,19 +17,18 @@ import ru.mail.tp.schedule.schedule.db.entities.EventType;
 import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
 
 public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
-    private final Activity context;
     private final ArrayList<ScheduleItem> schedule;
+    private final LayoutInflater inflater;
 
     public ScheduleListAdapter(Activity context, ArrayList<ScheduleItem> schedule) {
         super(context, R.layout.row_schedule, schedule);
-        this.context = context;
         this.schedule = schedule;
+        this.inflater = context.getLayoutInflater();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        LayoutInflater inflater = this.context.getLayoutInflater();
         ScheduleItem currentScheduleItem = schedule.get(position);
 
         if (convertView == null) {
