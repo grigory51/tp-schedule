@@ -46,7 +46,6 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
     private CheckBox showPastCheckBox;
     private FilterSpinnerItemsContainer filterSpinnerItemsContainer = null;
     private ScheduleCache cache = null;
-    private SlidingMenu menu;
 
     private boolean stackNotEmptySemaphore = false;
 
@@ -59,18 +58,6 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
         this.getSupportActionBar().setDisplayShowTitleEnabled(false);
         this.getSupportActionBar().setDisplayShowCustomEnabled(true);
         this.getSupportActionBar().setCustomView(R.layout.actionbar);
-
-        this.menu = new SlidingMenu(this);
-        this.menu.setMode(SlidingMenu.LEFT);
-        this.menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-        this.menu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
-        this.menu.setMenu(R.layout.menu);
-        this.menu.setShadowDrawable(R.drawable.shadow);
-        this.menu.setShadowWidth(1);
-
-        int menuWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.7);
-        this.menu.setBehindWidth(menuWidth > 450 ? 450 : menuWidth);
-
         this.subgroupsSpinner = (Spinner) findViewById(R.id.v_menu__subgroupsSpinner);
         this.disciplinesSpinner = (Spinner) findViewById(R.id.v_menu__disciplinesSpinner);
         this.typesSpinner = (Spinner) findViewById(R.id.v_menu__typesSpinner);
