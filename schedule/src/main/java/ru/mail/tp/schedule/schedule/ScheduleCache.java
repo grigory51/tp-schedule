@@ -11,18 +11,13 @@ import ru.mail.tp.schedule.utils.MoscowCalendar;
  * date: 30/09/14
  */
 public class ScheduleCache implements Serializable {
-    private final ScheduleBuilder scheduleBuilder;
     private final FilterSpinnerItemsContainer filterContainer;
     private final Date lastModified;
 
-    public ScheduleCache(ScheduleBuilder scheduleBuilder, FilterSpinnerItemsContainer filterContainer) {
-        this.scheduleBuilder = scheduleBuilder;
+    public ScheduleCache(FilterSpinnerItemsContainer filterContainer) {
+
         this.filterContainer = filterContainer;
         this.lastModified = MoscowCalendar.getInstance().getTime();
-    }
-
-    public ScheduleBuilder getScheduleBuilder() {
-        return scheduleBuilder;
     }
 
     public FilterSpinnerItemsContainer getFilterContainer() {
