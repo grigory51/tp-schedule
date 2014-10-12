@@ -1,10 +1,12 @@
 package ru.mail.tp.schedule.schedule;
 
+import java.io.Serializable;
+
 /**
  * author: grigory51
  * date: 27/09/14
  */
-public class ScheduleFilter {
+public class ScheduleFilter implements Serializable {
     private final int subgroupId;
     private final int disciplineId;
     private final int lessonTypeId;
@@ -33,7 +35,7 @@ public class ScheduleFilter {
         return this.lessonTypeId;
     }
 
-    public boolean isShowPassed() {
+    public boolean getShowPassed() {
         return this.showPassed;
     }
 }

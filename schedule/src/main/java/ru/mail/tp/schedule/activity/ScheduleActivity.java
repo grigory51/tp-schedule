@@ -1,217 +1,239 @@
 package ru.mail.tp.schedule.activity;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CheckBox;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
+import java.util.Date;
 
 import ru.mail.tp.schedule.R;
-import ru.mail.tp.schedule.schedule.FilterArrayAdapter;
-import ru.mail.tp.schedule.schedule.FilterSpinnerItem;
-import ru.mail.tp.schedule.schedule.FilterSpinnerItemsContainer;
-import ru.mail.tp.schedule.schedule.OnFilterChangeListener;
-import ru.mail.tp.schedule.schedule.ScheduleBuilder;
-import ru.mail.tp.schedule.schedule.ScheduleCache;
-import ru.mail.tp.schedule.schedule.ScheduleFilter;
-import ru.mail.tp.schedule.schedule.ScheduleListAdapter;
-import ru.mail.tp.schedule.schedule.entities.ScheduleItem;
-import ru.mail.tp.schedule.tasks.ITaskResultReceiver;
-import ru.mail.tp.schedule.tasks.TaskResult;
+import ru.mail.tp.schedule.fragments.OnScheduleItemClick;
+import ru.mail.tp.schedule.fragments.ScheduleDetailFragment;
+import ru.mail.tp.schedule.fragments.ScheduleListFragment;
+import ru.mail.tp.schedule.schedule.db.DBHelper;
+import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
+import ru.mail.tp.schedule.schedule.filter.FilterArrayAdapter;
+import ru.mail.tp.schedule.schedule.filter.FilterSpinnerItemsContainer;
+import ru.mail.tp.schedule.schedule.filter.FilterState;
+import ru.mail.tp.schedule.schedule.filter.OnFilterChangeListener;
 import ru.mail.tp.schedule.tasks.scheduleFetch.ScheduleFetchTaskResult;
+import ru.mail.tp.schedule.utils.ActionBarSherlockMenuItemAdapter;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 import ru.mail.tp.schedule.utils.MoscowSimpleDateFormat;
 
-public class ScheduleActivity extends SherlockActivity implements OnClickListener, ITaskResultReceiver {
-    private static final String CACHE_NAME = "ScheduleCache.txt";
-    private ScheduleCache cache = null;
+public class ScheduleActivity extends SherlockFragmentActivity implements OnScheduleItemClick, FragmentManager.OnBackStackChangedListener {
+    private Spinner subgroupsSpinner, disciplinesSpinner, typesSpinner;
+    private CheckBox showPastCheckBox;
     private FilterSpinnerItemsContainer filterSpinnerItemsContainer = null;
-    private ScheduleBuilder scheduleBuilder = null;
-    private SlidingMenu menu;
-    private ListView scheduleList;
-    private Activity context;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
-        this.context = this;
-        this.scheduleList = (ListView) findViewById(R.id.scheduleList);
 
-        this.getSupportActionBar().setDisplayShowHomeEnabled(false);
-        this.getSupportActionBar().setDisplayShowTitleEnabled(false);
-        this.getSupportActionBar().setDisplayShowCustomEnabled(true);
-        this.getSupportActionBar().setCustomView(R.layout.actionbar);
+        this.subgroupsSpinner = (Spinner) findViewById(R.id.v_menu__subgroupsSpinner);
+        this.disciplinesSpinner = (Spinner) findViewById(R.id.v_menu__disciplinesSpinner);
+        this.typesSpinner = (Spinner) findViewById(R.id.v_menu__typesSpinner);
+        this.showPastCheckBox = (CheckBox) findViewById(R.id.showPastCheckBox);
+        this.drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
-        this.menu = new SlidingMenu(this);
-        this.menu.setMode(SlidingMenu.LEFT);
-        this.menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-        this.menu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
-        this.menu.setMenu(R.layout.menu);
-        this.menu.setShadowDrawable(R.drawable.shadow);
-        this.menu.setShadowWidth(1);
-        this.menu.setBehindWidth((int) (getResources().getDisplayMetrics().widthPixels * 0.7));
-
-        ScheduleFetchTaskResult fetchTaskResult = (ScheduleFetchTaskResult) getIntent().getExtras().get(SplashActivity.TAG_FETCH_RESULT);
-        TextView lastUpdateTextView = (TextView) findViewById(R.id.lastUpdateTextView);
-
-        if (fetchTaskResult.getStatus() == ScheduleFetchTaskResult.STATUS_OK) {
-            this.scheduleBuilder = fetchTaskResult.getScheduleBuilder();
-            this.filterSpinnerItemsContainer = fetchTaskResult.getFilterSpinnerItemsContainer();
-            lastUpdateTextView.setText("Последнее обновление\n" + new MoscowSimpleDateFormat("dd.MM.yyyy в HH:mm").format(MoscowCalendar.getInstance().getTime()));
-            this.saveCache(new ScheduleCache(this.scheduleBuilder, this.filterSpinnerItemsContainer));
-        } else {
-            if (fetchTaskResult.getStatus() == ScheduleFetchTaskResult.STATUS_NETWORK_ERROR) {
+        if (savedInstanceState == null) {
+            ScheduleFetchTaskResult fetchTaskResult = (ScheduleFetchTaskResult) getIntent().getExtras().get(SplashActivity.TAG_FETCH_RESULT);
+            if (fetchTaskResult.getStatus() == ScheduleFetchTaskResult.STATUS_OK) {
+                this.setLastUpdateDate(new Date(MoscowCalendar.getInstance().getTimeInMillis()));
+            } else if (fetchTaskResult.getStatus() == ScheduleFetchTaskResult.STATUS_NETWORK_ERROR) {
                 Toast.makeText(this, "Ошибка получения данных", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, "Ошибка обработки данных", Toast.LENGTH_LONG).show();
             }
-            if (getCache() != null) {
-                this.scheduleBuilder = getCache().getScheduleBuilder();
-                this.filterSpinnerItemsContainer = getCache().getFilterContainer();
-                lastUpdateTextView.setText("Последнее обновление\n" + new MoscowSimpleDateFormat("dd.MM.yyyy в HH:mm").format(getCache().getLastModified()));
-            }
+
+            FilterState filterState = FilterState.createFromSharedPreferences(this);
+            this.filterSpinnerItemsContainer = new FilterSpinnerItemsContainer(new DBHelper(this), filterState);
+
+            ScheduleListFragment listFragment = new ScheduleListFragment();
+            Bundle arguments = new Bundle();
+            arguments.putSerializable("filter", filterSpinnerItemsContainer.getScheduleFilter());
+            listFragment.setArguments(arguments);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.a_schedule__frameLayout, listFragment)
+                    .commit();
+
+
+        } else {
+            this.filterSpinnerItemsContainer = (FilterSpinnerItemsContainer) savedInstanceState.getSerializable("filterSpinnerItemsContainer");
         }
 
-        if (this.scheduleBuilder != null && this.filterSpinnerItemsContainer != null) {
-            ScheduleListAdapter scheduleAdapter = new ScheduleListAdapter(this, scheduleBuilder.getScheduleItems());
-            scheduleList.setAdapter(scheduleAdapter);
-            this.initFilters();
-        }
-    }
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
 
-    private void initFilters() {
-        FilterArrayAdapter subgroupListAdapter = new FilterArrayAdapter(this);
-        FilterArrayAdapter disciplineListAdapter = new FilterArrayAdapter(this);
-        FilterArrayAdapter typeListAdapter = new FilterArrayAdapter(this);
-
-        final Spinner subgroupsSpinner = (Spinner) findViewById(R.id.subgroupsSpinner);
-        final Spinner disciplinesSpinner = (Spinner) findViewById(R.id.disciplinesSpinner);
-        final Spinner typesSpinner = (Spinner) findViewById(R.id.typesSpinner);
-        final CheckBox showPastCheckBox = (CheckBox) findViewById(R.id.showPastCheckBox);
-
-        subgroupsSpinner.setAdapter(subgroupListAdapter);
-        disciplinesSpinner.setAdapter(disciplineListAdapter);
-        typesSpinner.setAdapter(typeListAdapter);
-
-        subgroupListAdapter.addAll(this.filterSpinnerItemsContainer.getSubgroupItems());
-        disciplineListAdapter.addAll(this.filterSpinnerItemsContainer.getDisciplineItems());
-        typeListAdapter.addAll(this.filterSpinnerItemsContainer.getTypeItems());
-
-        subgroupsSpinner.setSelection(0, false);
-        disciplinesSpinner.setSelection(0, false);
-        typesSpinner.setSelection(0, false);
-
-        final OnFilterChangeListener filterChangeListener = new OnFilterChangeListener() {
-            @Override
-            public void onFilterChange() {
-                FilterSpinnerItem subgroupItem = (FilterSpinnerItem) subgroupsSpinner.getSelectedItem();
-                FilterSpinnerItem disciplineItem = (FilterSpinnerItem) disciplinesSpinner.getSelectedItem();
-                FilterSpinnerItem typeItem = (FilterSpinnerItem) typesSpinner.getSelectedItem();
-                boolean showPass = showPastCheckBox.isChecked();
-
-                ArrayList<ScheduleItem> newScheduleList = scheduleBuilder.getScheduleItems(new ScheduleFilter(subgroupItem.getId(), disciplineItem.getId(), typeItem.getId(), showPass));
-                ScheduleListAdapter newAdapter = new ScheduleListAdapter(context, newScheduleList);
-
-                scheduleList.setAdapter(newAdapter);
-            }
-        };
-
-        OnItemSelectedListener selectListener = new OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                filterChangeListener.onFilterChange();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-            }
-        };
-
-        subgroupsSpinner.setOnItemSelectedListener(selectListener);
-        disciplinesSpinner.setOnItemSelectedListener(selectListener);
-        typesSpinner.setOnItemSelectedListener(selectListener);
-
-        showPastCheckBox.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filterChangeListener.onFilterChange();
-            }
-        });
+        this.initDrawer();
+        this.initFilters(this.filterSpinnerItemsContainer);
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.updateScheduleButton:
-                break;
-            case R.id.todayButton:
-                break;
-            case R.id.menuButton:
-                this.menu.showMenu();
-                break;
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            return drawerToggle != null && drawerToggle.onOptionsItemSelected(new ActionBarSherlockMenuItemAdapter(item)) || super.onOptionsItemSelected(item);
+        } else {
+            getSupportFragmentManager().popBackStack();
+            return true;
         }
     }
 
     @Override
-    public void onPostExecute(TaskResult result) {
-
+    public void onBackStackChanged() {
+        if (this.drawerToggle != null) {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                this.drawerToggle.setDrawerIndicatorEnabled(false);
+                this.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            } else {
+                this.drawerToggle.setDrawerIndicatorEnabled(true);
+                this.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            }
+        }
     }
 
-    private void saveCache(ScheduleCache cache) {
-        FileOutputStream fos;
-        ObjectOutputStream oos;
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (this.drawerToggle != null) {
+            this.drawerToggle.syncState();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("filterSpinnerItemsContainer", this.filterSpinnerItemsContainer);
+    }
+
+    private void setLastUpdateDate(Date date) {
+        TextView lastUpdateTextView = (TextView) findViewById(R.id.v_menu__lastUpdateTextView);
+        lastUpdateTextView.setText("Последнее обновление\n" + new MoscowSimpleDateFormat("dd.MM.yyyy в HH:mm").format(date));
+    }
+
+    @SuppressLint("InlinedApi")
+    private void initDrawer() {
+        if (this.drawerLayout != null) {
+            this.drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.opened, R.string.closed);
+            this.drawerToggle.setDrawerIndicatorEnabled(getSupportFragmentManager().getBackStackEntryCount() == 0);
+
+            drawerLayout.setDrawerListener(this.drawerToggle);
+
+            this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            this.getSupportActionBar().setHomeButtonEnabled(true);
+            this.getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+    }
+
+    private void initFilters(final FilterSpinnerItemsContainer filterContainer) {
+        if (filterContainer != null) {
+            final Context context = this;
+            FilterArrayAdapter subgroupListAdapter = new FilterArrayAdapter(this, filterContainer.getSubgroupItems());
+            FilterArrayAdapter disciplineListAdapter = new FilterArrayAdapter(this, filterContainer.getDisciplineItems());
+            FilterArrayAdapter typeListAdapter = new FilterArrayAdapter(this, filterContainer.getLessonTypeItems());
+
+            subgroupsSpinner.setAdapter(subgroupListAdapter);
+            disciplinesSpinner.setAdapter(disciplineListAdapter);
+            typesSpinner.setAdapter(typeListAdapter);
+
+            int subgroupPosition = filterSpinnerItemsContainer.getFilterState().getSubgroupPosition();
+            int disciplinePosition = filterSpinnerItemsContainer.getFilterState().getDisciplinePosition();
+            int typePosition = filterSpinnerItemsContainer.getFilterState().getLessonTypePosition();
+
+            subgroupsSpinner.setSelection(subgroupPosition < subgroupsSpinner.getCount() ? subgroupPosition : 0, false);
+            disciplinesSpinner.setSelection(disciplinePosition < disciplinesSpinner.getCount() ? disciplinePosition : 0, false);
+            typesSpinner.setSelection(typePosition < typesSpinner.getCount() ? typePosition : 0, false);
+            showPastCheckBox.setChecked(filterSpinnerItemsContainer.getFilterState().isShowPassed());
+
+            final OnFilterChangeListener filterChangeListener = new OnFilterChangeListener() {
+                @Override
+                public void onFilterChange() {
+                    filterSpinnerItemsContainer.getFilterState().setSubgroupPosition(subgroupsSpinner.getSelectedItemPosition());
+                    filterSpinnerItemsContainer.getFilterState().setDisciplinePosition(disciplinesSpinner.getSelectedItemPosition());
+                    filterSpinnerItemsContainer.getFilterState().setLessonTypePosition(typesSpinner.getSelectedItemPosition());
+                    filterSpinnerItemsContainer.getFilterState().setShowPassed(showPastCheckBox.isChecked());
+
+                    filterContainer.getFilterState().saveToSharedPreferences(context);
+
+                    ScheduleListFragment scheduleListFragment = getScheduleListFragment();
+                    if (scheduleListFragment != null) {
+                        scheduleListFragment.setScheduleFilter(filterSpinnerItemsContainer.getScheduleFilter());
+                    }
+                }
+            };
+
+            OnItemSelectedListener selectListener = new OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                    filterChangeListener.onFilterChange();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> arg0) {
+                }
+            };
+
+            OnClickListener clickListener = new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    filterChangeListener.onFilterChange();
+                }
+            };
+
+            subgroupsSpinner.setOnItemSelectedListener(selectListener);
+            disciplinesSpinner.setOnItemSelectedListener(selectListener);
+            typesSpinner.setOnItemSelectedListener(selectListener);
+            showPastCheckBox.setOnClickListener(clickListener);
+        }
+    }
+
+
+    private ScheduleListFragment getScheduleListFragment() {
+        ScheduleListFragment fragment = null;
         try {
-            fos = openFileOutput(CACHE_NAME, MODE_PRIVATE);
-            oos = new ObjectOutputStream(fos);
-            oos.writeObject(cache);
-            oos.flush();
-            oos.close();
-            this.cache = cache;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            fragment = (ScheduleListFragment) getSupportFragmentManager().findFragmentById(R.id.a_schedule__frameLayout);
+        } catch (ClassCastException ignore) {
         }
+        return fragment;
     }
 
-    private ScheduleCache getCache() {
-        if (this.cache == null) {
-            FileInputStream fis;
-            ObjectInputStream ois;
-            try {
-                fis = openFileInput(CACHE_NAME);
-                ois = new ObjectInputStream(fis);
+    @Override
+    public void onScheduleItemClick(ScheduleItem scheduleItem) {
+        ScheduleDetailFragment detailFragment = (ScheduleDetailFragment) getSupportFragmentManager().findFragmentById(R.id.a_schedule__frameLayout_detail);
 
-                ScheduleCache cache = (ScheduleCache) ois.readObject();
-                ois.close();
+        if (detailFragment == null) {
+            Bundle arguments = new Bundle();
+            arguments.putSerializable("scheduleItem", scheduleItem);
 
-                this.cache = cache;
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+            ScheduleDetailFragment scheduleDetailFragment = new ScheduleDetailFragment();
+            scheduleDetailFragment.setArguments(arguments);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right, R.animator.slide_in_left, R.animator.slide_out_right)
+                    .replace(R.id.a_schedule__frameLayout, scheduleDetailFragment)
+                    .addToBackStack(null)
+                    .commit();
+        } else {
+            detailFragment.showItem(scheduleItem);
         }
-        return this.cache;
     }
 }

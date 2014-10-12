@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="ru.mail.tp.schedule"
-          android:versionName="0.0"
-          android:versionCode="2">
+          package="ru.mail.tp.schedule">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
-        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:allowBackup="true">
         <activity
-            android:name=".activity.SplashActivity"
+            android:name="ru.mail.tp.schedule.activity.SplashActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.ScheduleActivity"
-            android:screenOrientation="portrait"/>
+        <activity android:name="ru.mail.tp.schedule.activity.ScheduleActivity"/>
+
+
     </application>
+
 </manifest>

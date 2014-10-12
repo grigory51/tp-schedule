@@ -18,4 +18,7 @@
     <string name="showPast">Отображать прошедшие занятия</string>
     <string name="dataSourceUrl">http://tptt.ozhegov.name/</string>
 
+    <string name="opened">Drawer opened</string>
+    <string name="closed">Drawer closed</string>
+
 </resources>
