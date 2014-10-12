@@ -21,10 +21,10 @@ import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 
 public class ScheduleDetailFragment extends Fragment implements OnClickListener {
+    private final Calendar calendar = MoscowCalendar.getInstance();
     private TextView title, subtitle, date, time;
     private ImageButton addToCalendarButton;
     private ScheduleItem scheduleItem = null;
-    private final Calendar calendar = MoscowCalendar.getInstance();
     private RelativeLayout layout;
 
     public ScheduleDetailFragment() {

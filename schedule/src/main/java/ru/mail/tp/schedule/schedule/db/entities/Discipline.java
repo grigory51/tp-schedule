@@ -24,8 +24,9 @@ public class Discipline extends BaseEntity implements IFilterSpinner {
         this(Integer.parseInt(id), title, shortTitle);
     }
 
-    public Discipline(int id, String title) {
-        this(id, title, title);
+    @SuppressWarnings("SameParameterValue")
+    public Discipline(String title) {
+        this(0, title, title);
     }
 
     public Discipline(int id, String title, String shortTitle) {

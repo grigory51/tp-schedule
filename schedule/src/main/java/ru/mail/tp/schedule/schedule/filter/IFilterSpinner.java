@@ -8,5 +8,6 @@ import java.io.Serializable;
  */
 public interface IFilterSpinner extends Serializable {
     public int getId();
+
     public String getFilterTitle();
 }

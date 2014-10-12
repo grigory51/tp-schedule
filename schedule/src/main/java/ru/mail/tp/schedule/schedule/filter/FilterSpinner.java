@@ -6,7 +6,7 @@ import java.io.Serializable;
  * author: grigory51
  * date: 06/10/14
  */
-public class FilterSpinner implements Serializable {
+class FilterSpinner implements Serializable {
     private final IFilterSpinner item;
 
     public FilterSpinner(IFilterSpinner item) {

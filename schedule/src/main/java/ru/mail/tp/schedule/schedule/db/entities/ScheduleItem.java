@@ -186,6 +186,7 @@ public class ScheduleItem extends BaseEntity implements Serializable {
         return new MoscowSimpleDateFormat(format).format(this.getTimeStart());
     }
 
+    @SuppressWarnings("SameParameterValue")
     public String getFormatTimeEnd(String format) {
         return new MoscowSimpleDateFormat(format).format(this.getTimeEnd());
     }
