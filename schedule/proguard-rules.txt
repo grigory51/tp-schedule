@@ -1,0 +1,10 @@
+-optimizationpasses 5
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-verbose
+
+-keep class ru.mail.tp.schedule.**
+-keep class com.actionbarsherlock.**
+
+-dontwarn com.actionbarsherlock.internal.**
