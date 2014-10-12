@@ -19,12 +19,17 @@ public abstract class BaseEntity implements BaseColumns, Serializable {
 
     protected abstract String getTableName();
 
-    protected String[] getIndexes() {
+    String[] getIndexes() {
         return new String[]{};
     }
 
-    public long replace(SQLiteDatabase db) {
-        return db.replace(this.getTableName(), null, this.getContentValues());
+    public long insert(SQLiteDatabase db) {
+        return db.insert(this.getTableName(), null, this.getContentValues());
+    }
+
+    public void truncate(SQLiteDatabase db) {
+        db.execSQL(this.dropTableSQL());
+        db.execSQL(this.createTableSQL());
     }
 
     public String createTableSQL() {

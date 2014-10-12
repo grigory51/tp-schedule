@@ -73,22 +73,32 @@ public class ScheduleFetchTask extends Task {
             ScheduleJSONProcessor processor = new ScheduleJSONProcessor(json);
             DBHelper dbHelper = new DBHelper(this.context);
             SQLiteDatabase db = dbHelper.getWritableDatabase();
+
             db.beginTransaction();
 
+            Discipline.instance().truncate(db);
             for (Discipline discipline : processor.getDisciplines()) {
-                discipline.replace(db);
+                discipline.insert(db);
             }
+
+            LessonType.instance().truncate(db);
             for (LessonType lessonType : processor.getLessonTypes()) {
-                lessonType.replace(db);
+                lessonType.insert(db);
             }
+
+            Place.instance().truncate(db);
             for (Place place : processor.getPlaces()) {
-                place.replace(db);
+                place.insert(db);
             }
+
+            Subgroup.instance().truncate(db);
             for (Subgroup subgroup : processor.getSubgroups()) {
-                subgroup.replace(db);
+                subgroup.insert(db);
             }
+
+            ScheduleItem.instance().truncate(db);
             for (ScheduleItem item : processor.getScheduleItems()) {
-                item.replace(db);
+                item.insert(db);
             }
 
             db.setTransactionSuccessful();
