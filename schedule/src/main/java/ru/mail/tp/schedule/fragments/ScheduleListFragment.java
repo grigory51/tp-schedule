@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import ru.mail.tp.schedule.R;
 import ru.mail.tp.schedule.schedule.ScheduleFilter;
-
 import ru.mail.tp.schedule.schedule.ScheduleListAdapter;
 import ru.mail.tp.schedule.schedule.db.DBHelper;
 import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
@@ -35,7 +34,12 @@ public class ScheduleListFragment extends Fragment implements AdapterView.OnItem
         super.onCreate(savedInstanceState);
         this.dbHelper = new DBHelper(getActivity());
         if (savedInstanceState == null) {
-            this.filter = new ScheduleFilter();
+            Bundle arguments = getArguments();
+            if (arguments != null) {
+                this.filter = (ScheduleFilter) arguments.get("filter");
+            } else {
+                this.filter = new ScheduleFilter();
+            }
             this.scheduleItems = dbHelper.getScheduleItems(this.filter);
         } else {
             this.filter = (ScheduleFilter) savedInstanceState.get("scheduleFilter");

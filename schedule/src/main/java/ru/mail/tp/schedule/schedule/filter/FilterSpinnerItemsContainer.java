@@ -2,6 +2,7 @@ package ru.mail.tp.schedule.schedule.filter;
 
 import java.io.Serializable;
 
+import ru.mail.tp.schedule.schedule.ScheduleFilter;
 import ru.mail.tp.schedule.schedule.db.DBHelper;
 import ru.mail.tp.schedule.schedule.db.entities.Discipline;
 import ru.mail.tp.schedule.schedule.db.entities.LessonType;
@@ -12,20 +13,19 @@ public class FilterSpinnerItemsContainer implements Serializable {
     private final FilterSpinnerList disciplineItems;
     private final FilterSpinnerList lessonTypeItems;
 
-    private int subgroupPosition, disciplinePosition, lessonTypePosition;
-    private boolean showPassed;
+    private final FilterState filterState;
 
-    public FilterSpinnerItemsContainer(DBHelper db) {
+    public FilterSpinnerItemsContainer(DBHelper db, FilterState filterState) {
         this.subgroupItems = new FilterSpinnerList();
         this.disciplineItems = new FilterSpinnerList();
         this.lessonTypeItems = new FilterSpinnerList();
 
         this.subgroupItems.add(new FilterSpinner(new Subgroup(0, "Все")));
-        this.disciplineItems.add(new FilterSpinner(new Discipline(0, "Все")));
+        this.disciplineItems.add(new FilterSpinner(new Discipline("Все")));
         this.lessonTypeItems.add(new FilterSpinner(new LessonType(0, "Все")));
 
         for (Subgroup item : db.getSubgroups()) {
-            this.subgroupItems.add(item);
+               this.subgroupItems.add(item);
         }
         for (Discipline item : db.getDisciplines()) {
             this.disciplineItems.add(item);
@@ -34,8 +34,23 @@ public class FilterSpinnerItemsContainer implements Serializable {
             this.lessonTypeItems.add(item);
         }
 
-        this.subgroupPosition = this.disciplinePosition = this.lessonTypePosition = 0;
-        this.showPassed = false;
+        if (filterState != null) {
+            this.filterState = filterState;
+        } else {
+            this.filterState = new FilterState();
+        }
+    }
+
+    public ScheduleFilter getScheduleFilter() {
+        int subgroupPosition = this.getFilterState().getSubgroupPosition();
+        int disciplinePosition = this.getFilterState().getDisciplinePosition();
+        int typePosition = this.getFilterState().getLessonTypePosition();
+
+        FilterSpinner subgroupItem = subgroupItems.get(subgroupPosition < subgroupItems.size() ? subgroupPosition : 0);
+        FilterSpinner disciplineItem = disciplineItems.get(disciplinePosition < disciplineItems.size() ? disciplinePosition : 0);
+        FilterSpinner typeItem = lessonTypeItems.get(typePosition < lessonTypeItems.size() ? typePosition : 0);
+
+        return new ScheduleFilter(subgroupItem.getId(), disciplineItem.getId(), typeItem.getId(), this.getFilterState().isShowPassed());
     }
 
     public FilterSpinnerList getSubgroupItems() {
@@ -50,35 +65,7 @@ public class FilterSpinnerItemsContainer implements Serializable {
         return this.lessonTypeItems;
     }
 
-    public int getSubgroupPosition() {
-        return this.subgroupPosition;
-    }
-
-    public void setSubgroupPosition(int subgroupPosition) {
-        this.subgroupPosition = subgroupPosition;
-    }
-
-    public int getDisciplinePosition() {
-        return this.disciplinePosition;
-    }
-
-    public void setDisciplinePosition(int disciplinePosition) {
-        this.disciplinePosition = disciplinePosition;
-    }
-
-    public int getLessonTypePosition() {
-        return this.lessonTypePosition;
-    }
-
-    public void setLessonTypePosition(int lessonTypePosition) {
-        this.lessonTypePosition = lessonTypePosition;
-    }
-
-    public boolean getShowPassed() {
-        return this.showPassed;
-    }
-
-    public void setShowPassed(boolean showPassed) {
-        this.showPassed = showPassed;
+    public FilterState getFilterState() {
+        return this.filterState;
     }
 }
