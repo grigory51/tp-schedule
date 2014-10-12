@@ -1,34 +1,29 @@
 package ru.mail.tp.schedule.activity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.actionbarsherlock.view.MenuItem;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Date;
 
 import ru.mail.tp.schedule.R;
 import ru.mail.tp.schedule.fragments.OnScheduleItemClick;
 import ru.mail.tp.schedule.fragments.ScheduleDetailFragment;
 import ru.mail.tp.schedule.fragments.ScheduleListFragment;
-import ru.mail.tp.schedule.schedule.ScheduleCache;
 import ru.mail.tp.schedule.schedule.ScheduleFilter;
 import ru.mail.tp.schedule.schedule.db.DBHelper;
 import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
@@ -37,31 +32,27 @@ import ru.mail.tp.schedule.schedule.filter.FilterSpinner;
 import ru.mail.tp.schedule.schedule.filter.FilterSpinnerItemsContainer;
 import ru.mail.tp.schedule.schedule.filter.OnFilterChangeListener;
 import ru.mail.tp.schedule.tasks.scheduleFetch.ScheduleFetchTaskResult;
+import ru.mail.tp.schedule.utils.ActionBarSherlockMenuItemAdapter;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 import ru.mail.tp.schedule.utils.MoscowSimpleDateFormat;
 
-public class ScheduleActivity extends SherlockFragmentActivity implements OnClickListener, OnScheduleItemClick, FragmentManager.OnBackStackChangedListener {
-    private static final String CACHE_NAME = "ScheduleCache.txt";
+public class ScheduleActivity extends SherlockFragmentActivity implements OnScheduleItemClick, FragmentManager.OnBackStackChangedListener {
     private Spinner subgroupsSpinner, disciplinesSpinner, typesSpinner;
     private CheckBox showPastCheckBox;
     private FilterSpinnerItemsContainer filterSpinnerItemsContainer = null;
-    private ScheduleCache cache = null;
-
-    private boolean stackNotEmptySemaphore = false;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
 
-        this.getSupportActionBar().setDisplayShowHomeEnabled(false);
-        this.getSupportActionBar().setDisplayShowTitleEnabled(false);
-        this.getSupportActionBar().setDisplayShowCustomEnabled(true);
-        this.getSupportActionBar().setCustomView(R.layout.actionbar);
         this.subgroupsSpinner = (Spinner) findViewById(R.id.v_menu__subgroupsSpinner);
         this.disciplinesSpinner = (Spinner) findViewById(R.id.v_menu__disciplinesSpinner);
         this.typesSpinner = (Spinner) findViewById(R.id.v_menu__typesSpinner);
         this.showPastCheckBox = (CheckBox) findViewById(R.id.showPastCheckBox);
+        this.drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
         if (savedInstanceState == null) {
             ScheduleFetchTaskResult fetchTaskResult = (ScheduleFetchTaskResult) getIntent().getExtras().get(SplashActivity.TAG_FETCH_RESULT);
@@ -85,8 +76,39 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
 
         getSupportFragmentManager().addOnBackStackChangedListener(this);
 
-        this.initSlideMenu();
+        this.initDrawer();
         this.initFilters(this.filterSpinnerItemsContainer);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            return drawerToggle != null && drawerToggle.onOptionsItemSelected(new ActionBarSherlockMenuItemAdapter(item)) || super.onOptionsItemSelected(item);
+        } else {
+            getSupportFragmentManager().popBackStack();
+            return true;
+        }
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        if (this.drawerToggle != null) {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                this.drawerToggle.setDrawerIndicatorEnabled(false);
+                this.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            } else {
+                this.drawerToggle.setDrawerIndicatorEnabled(true);
+                this.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            }
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (this.drawerToggle != null) {
+            this.drawerToggle.syncState();
+        }
     }
 
     @Override
@@ -98,6 +120,20 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
     private void setLastUpdateDate(Date date) {
         TextView lastUpdateTextView = (TextView) findViewById(R.id.v_menu__lastUpdateTextView);
         lastUpdateTextView.setText("Последнее обновление\n" + new MoscowSimpleDateFormat("dd.MM.yyyy в HH:mm").format(date));
+    }
+
+    @SuppressLint("InlinedApi")
+    private void initDrawer() {
+        if (this.drawerLayout != null) {
+            this.drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.opened, R.string.closed);
+            this.drawerToggle.setDrawerIndicatorEnabled(getSupportFragmentManager().getBackStackEntryCount() == 0);
+
+            drawerLayout.setDrawerListener(this.drawerToggle);
+
+            this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            this.getSupportActionBar().setHomeButtonEnabled(true);
+            this.getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
     }
 
     private void initFilters(FilterSpinnerItemsContainer filterContainer) {
@@ -163,46 +199,6 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
         return new ScheduleFilter(subgroupItem.getId(), disciplineItem.getId(), typeItem.getId(), showPastCheckBox.isChecked());
     }
 
-    private void saveCache(ScheduleCache cache) {
-        FileOutputStream fos;
-        ObjectOutputStream oos;
-        try {
-            fos = openFileOutput(CACHE_NAME, MODE_PRIVATE);
-            oos = new ObjectOutputStream(fos);
-            oos.writeObject(cache);
-            oos.flush();
-            oos.close();
-            this.cache = cache;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private ScheduleCache getCache() {
-        if (this.cache == null) {
-            FileInputStream fis;
-            ObjectInputStream ois;
-            try {
-                fis = openFileInput(CACHE_NAME);
-                ois = new ObjectInputStream(fis);
-
-                ScheduleCache cache = (ScheduleCache) ois.readObject();
-                ois.close();
-
-                this.cache = cache;
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-        return this.cache;
-    }
-
     private ScheduleListFragment getScheduleListFragment() {
         ScheduleListFragment fragment = null;
         try {
@@ -212,66 +208,25 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
         return fragment;
     }
 
-    private ScheduleDetailFragment getScheduleDetailFragment() {
-        ScheduleDetailFragment fragment = null;
-        try {
-            fragment = (ScheduleDetailFragment) getSupportFragmentManager().findFragmentById(R.id.a_schedule__frameLayout);
-        } catch (ClassCastException ignore) {
-        }
-        return fragment;
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.v_actionbar__updateScheduleButton:
-                //todo сделать кнопку обновления расписания
-                break;
-            case R.id.v_actionbar__todayButton:
-                //todo сделать прокручивание к сегодняшнему дню
-                break;
-            case R.id.v_actionbar__menuButton:
-                if (!this.stackNotEmptySemaphore) {
-                    this.menu.showMenu();
-                }
-                break;
-        }
-    }
-
     @Override
     public void onScheduleItemClick(ScheduleItem scheduleItem) {
-        Bundle arguments = new Bundle();
-        arguments.putSerializable("scheduleItem", scheduleItem);
+        ScheduleDetailFragment detailFragment = (ScheduleDetailFragment) getSupportFragmentManager().findFragmentById(R.id.a_schedule__frameLayout_detail);
 
-        ScheduleDetailFragment scheduleDetailFragment = new ScheduleDetailFragment();
-        scheduleDetailFragment.setArguments(arguments);
+        if (detailFragment == null) {
+            Bundle arguments = new Bundle();
+            arguments.putSerializable("scheduleItem", scheduleItem);
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(R.animator.slide_in_left, R.animator.exit_to_left, R.animator.slide_in_left, R.animator.exit_to_left)
-                .replace(R.id.a_schedule__frameLayout, scheduleDetailFragment)
-                .addToBackStack("tag")
-                .commit();
-    }
+            ScheduleDetailFragment scheduleDetailFragment = new ScheduleDetailFragment();
+            scheduleDetailFragment.setArguments(arguments);
 
-    private void initSlideMenu() {
-        ImageButton menuButton = (ImageButton) findViewById(R.id.v_actionbar__menuButton);
-        ViewGroup.LayoutParams params = menuButton.getLayoutParams();
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            this.stackNotEmptySemaphore = false;
-            this.menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-            params.width = 300;
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right, R.animator.slide_in_left, R.animator.slide_out_right)
+                    .replace(R.id.a_schedule__frameLayout, scheduleDetailFragment)
+                    .addToBackStack(null)
+                    .commit();
         } else {
-            this.stackNotEmptySemaphore = true;
-            this.menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
-            params.width = 200;
+            detailFragment.showItem(scheduleItem);
         }
-        menuButton.setLayoutParams(params);
-        menuButton.requestLayout();
-    }
-
-    @Override
-    public void onBackStackChanged() {
-        this.initSlideMenu();
     }
 }
