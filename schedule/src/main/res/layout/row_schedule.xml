@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/v_row_schedule__tableRowSchedule"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:weightSum="1"
     android:background="#ffffffff"
@@ -79,7 +78,7 @@
         <View
             android:layout_width="fill_parent"
             android:layout_height="2dp"
-            android:background="#20000000"
+            android:background="@color/light_gray"
 
             android:layout_above="@id/v_row_schedule__timeEndTextView"
             android:layout_alignParentLeft="true"
@@ -118,8 +117,7 @@
         android:layout_below="@id/v_row_schedule__titleTextView"
         style="@style/scheduleItem__title"/>
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/v_row_schedule__locationTitleContainer"
@@ -132,7 +130,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_location"
-            android:scaleType="centerInside"/>
+            android:id="@+id/imageView"
+            android:scaleType="center"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -140,9 +142,13 @@
             android:text="316 ауд."
             android:id="@+id/v_row_schedule__locationTextView"
             android:textSize="18sp"
-            android:paddingLeft="4dp"/>
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/imageView"
+            android:layout_toEndOf="@+id/imageView"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 
 </RelativeLayout>
