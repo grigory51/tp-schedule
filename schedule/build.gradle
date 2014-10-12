@@ -16,7 +16,7 @@ android {
 
     buildTypes {
         release {
-            runProguard true
+            runProguard false
             proguardFiles 'proguard-rules.txt'
         }
         debug {
