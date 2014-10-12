@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
-import ru.mail.tp.schedule.schedule.ScheduleFilter;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 import ru.mail.tp.schedule.utils.MoscowSimpleDateFormat;
 
@@ -208,32 +207,6 @@ public class ScheduleItem extends BaseEntity implements Serializable {
         } else {
             return "";
         }
-    }
-
-    public boolean isFilterMatch(ScheduleFilter filter) {
-        if (!filter.getShowPassed() && MoscowCalendar.getTodayInstance().getTimeInMillis() > this.getDayStart()) {
-            return false;
-        }
-        if (filter.getDisciplineId() != 0 && (this.getDiscipline() == null || this.getDiscipline().getId() != filter.getDisciplineId())) {
-            return false;
-        }
-        if (filter.getSubgroupId() != 0) {
-            boolean match = false;
-            for (Subgroup subgroup : this.getSubgroups()) {
-                if (filter.getSubgroupId() == subgroup.getId()) {
-                    match = true;
-                    break;
-                }
-            }
-            if (!match) {
-                return false;
-            }
-        }
-        //noinspection RedundantIfStatement
-        if (filter.getLessonTypeId() != 0 && (this.getLessonType() == null || this.getLessonType().getId() != filter.getLessonTypeId())) {
-            return false;
-        }
-        return true;
     }
 
     @Override
