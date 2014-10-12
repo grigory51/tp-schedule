@@ -149,6 +149,10 @@ public class DBHelper extends SQLiteOpenHelper {
             subgroupsMap.put(Integer.valueOf(item.getId()).toString(), item);
         }
 
+        if (filter == null) {
+            filter = new ScheduleFilter();
+        }
+
         String scheduleItemTable = ScheduleItem.instance().getTableName();
         String disciplineTable = Discipline.instance().getTableName();
         String lessonTypeTable = LessonType.instance().getTableName();
@@ -186,43 +190,34 @@ public class DBHelper extends SQLiteOpenHelper {
         queryBuilder.setTables(table);
         SQLiteDatabase db = this.getReadableDatabase();
 
-
-        StringBuilder whereCondition = new StringBuilder();
+        StringBuilder whereCondition = new StringBuilder("1=1");
         ArrayList<String> whereParams = new ArrayList<String>();
-        if (filter != null) {
-            boolean first = true;
-            if (filter.getDisciplineId() != 0) {
-                whereCondition
-                        .append(disciplineTable)
-                        .append(".")
-                        .append(Discipline.COLUMN_NAME_ID.getName()).append(" = ?");
-                whereParams.add(String.valueOf(filter.getDisciplineId()));
-                first = false;
-            }
-            if (filter.getLessonTypeId() != 0) {
-                if (!first) {
-                    whereCondition.append(" AND ");
-                }
 
-                whereCondition
-                        .append(lessonTypeTable)
-                        .append(".")
-                        .append(LessonType.COLUMN_NAME_ID.getName()).append(" = ?");
-                whereParams.add(String.valueOf(filter.getLessonTypeId()));
-                first = false;
-            }
-            if (!filter.getShowPassed()) {
-                if (!first) {
-                    whereCondition.append(" AND ");
-                }
-
-                whereCondition
-                        .append(scheduleItemTable)
-                        .append(".")
-                        .append(ScheduleItem.COLUMN_NAME_TIME_START.getName()).append(" > ?");
-                whereParams.add(String.valueOf(MoscowCalendar.getTodayInstance().getTimeInMillis()));
-            }
+        if (filter.getDisciplineId() != 0) {
+            whereCondition
+                    .append(" AND ")
+                    .append(disciplineTable)
+                    .append(".")
+                    .append(Discipline.COLUMN_NAME_ID.getName()).append(" = ?");
+            whereParams.add(String.valueOf(filter.getDisciplineId()));
         }
+        if (filter.getLessonTypeId() != 0) {
+            whereCondition
+                    .append(" AND ")
+                    .append(lessonTypeTable)
+                    .append(".")
+                    .append(LessonType.COLUMN_NAME_ID.getName()).append(" = ?");
+            whereParams.add(String.valueOf(filter.getLessonTypeId()));
+        }
+        if (!filter.getShowPassed()) {
+            whereCondition
+                    .append(" AND ")
+                    .append(scheduleItemTable)
+                    .append(".")
+                    .append(ScheduleItem.COLUMN_NAME_TIME_START.getName()).append(" > ?");
+            whereParams.add(String.valueOf(MoscowCalendar.getTodayInstance().getTimeInMillis()));
+        }
+
 
         Cursor cursor = queryBuilder.query(this.getReadableDatabase(), projection, whereCondition.toString(), whereParams.toArray(new String[whereParams.size()]), null, null, order);
 
@@ -232,33 +227,40 @@ public class DBHelper extends SQLiteOpenHelper {
                 int typeIndex = cursor.getInt(1);
                 Place place = cursor.isNull(11) ? null : new Place(cursor.getInt(11), cursor.getInt(12), cursor.getString(13));
                 if (EventType.EVENT.ordinal() == typeIndex) {
-
-                    item = new ScheduleItem(
-                            cursor.getInt(0),
-                            cursor.getLong(2),
-                            cursor.getLong(3),
-                            cursor.getString(4),
-                            place
-                    );
+                    if (filter.getSubgroupId() == 0) {
+                        item = new ScheduleItem(
+                                cursor.getInt(0),
+                                cursor.getLong(2),
+                                cursor.getLong(3),
+                                cursor.getString(4),
+                                place
+                        );
+                    }
                 } else if (EventType.LESSON.ordinal() == typeIndex) {
                     ArrayList<Subgroup> subgroups = new ArrayList<Subgroup>();
+                    boolean groupMatch = false;
 
                     for (String subgroupId : cursor.getString(14).split(",")) {
+                        if (filter.getSubgroupId() == 0 || filter.getSubgroupId() == Integer.parseInt(subgroupId)) {
+                            groupMatch = true;
+                        }
+
                         if (subgroupsMap.containsKey(subgroupId)) {
                             subgroups.add(subgroupsMap.get(subgroupId));
                         }
                     }
-
-                    item = new ScheduleItem(
-                            cursor.getInt(0),
-                            cursor.getLong(2),
-                            cursor.getLong(3),
-                            place,
-                            subgroups,
-                            new Discipline(cursor.getInt(5), cursor.getString(6), cursor.getString(7)),
-                            new LessonType(cursor.getInt(8), cursor.getString(9)),
-                            cursor.getInt(10)
-                     );
+                    if (groupMatch) {
+                        item = new ScheduleItem(
+                                cursor.getInt(0),
+                                cursor.getLong(2),
+                                cursor.getLong(3),
+                                place,
+                                subgroups,
+                                new Discipline(cursor.getInt(5), cursor.getString(6), cursor.getString(7)),
+                                new LessonType(cursor.getInt(8), cursor.getString(9)),
+                                cursor.getInt(10)
+                        );
+                    }
                 }
                 if (item != null) {
                     result.add(item);
