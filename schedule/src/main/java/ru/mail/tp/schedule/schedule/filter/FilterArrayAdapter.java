@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * date: 22.07.14
  */
 public class FilterArrayAdapter extends ArrayAdapter<FilterSpinner> {
-    public FilterArrayAdapter(Context context) {
+    private FilterArrayAdapter(Context context) {
         super(context, android.R.layout.simple_spinner_item);
         this.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     }
@@ -20,7 +20,7 @@ public class FilterArrayAdapter extends ArrayAdapter<FilterSpinner> {
         this.addAll(list);
     }
 
-    public void addAll(ArrayList<FilterSpinner> list) {
+    void addAll(ArrayList<FilterSpinner> list) {
         for (FilterSpinner item : list) {
             this.add(item);
         }

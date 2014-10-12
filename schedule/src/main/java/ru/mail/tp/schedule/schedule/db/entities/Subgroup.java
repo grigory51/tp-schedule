@@ -1,8 +1,6 @@
 package ru.mail.tp.schedule.schedule.db.entities;
 
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import ru.mail.tp.schedule.schedule.filter.IFilterSpinner;
 

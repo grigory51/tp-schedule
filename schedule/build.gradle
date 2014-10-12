@@ -1,5 +1,6 @@
-apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
+
+def version = "1.0.0"
 
 android {
     compileSdkVersion 20
@@ -7,20 +8,24 @@ android {
 
     defaultConfig {
         applicationId "ru.mail.tp.schedule"
-        minSdkVersion 11
+        minSdkVersion 7
         targetSdkVersion 20
+        versionName version
+        versionCode 0
     }
 
     buildTypes {
         release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            runProguard true
+            proguardFiles 'proguard-rules.txt'
+        }
+        debug {
+            versionNameSuffix "-SNAPSHOT"
         }
     }
 }
 
 dependencies {
-    compile project(':slidingMenu')
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     compile 'com.android.support:support-v4:20.0.0'
 }

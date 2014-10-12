@@ -28,7 +28,7 @@ public class Place extends BaseEntity {
         this(Integer.parseInt(id), type, title);
     }
 
-    public Place(int id, PlaceType type, String title) {
+    private Place(int id, PlaceType type, String title) {
         this.id = id;
         this.type = type;
         this.title = title;

@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -17,19 +16,18 @@ import ru.mail.tp.schedule.schedule.db.entities.EventType;
 import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
 
 public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
-    private final Activity context;
     private final ArrayList<ScheduleItem> schedule;
+    private final LayoutInflater inflater;
 
     public ScheduleListAdapter(Activity context, ArrayList<ScheduleItem> schedule) {
         super(context, R.layout.row_schedule, schedule);
-        this.context = context;
         this.schedule = schedule;
+        this.inflater = context.getLayoutInflater();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        LayoutInflater inflater = this.context.getLayoutInflater();
         ScheduleItem currentScheduleItem = schedule.get(position);
 
         if (convertView == null) {
@@ -86,7 +84,7 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
         private TextView today;
         private TableRow dateRow;
         private RelativeLayout tableRowScheduleContent;
-        private LinearLayout locationTitleContainer;
+        private RelativeLayout locationTitleContainer;
 
         public void init(View rowView) {
             this.tableRowScheduleContent = (RelativeLayout) rowView.findViewById(R.id.v_row_schedule__tableRowSchedule);
@@ -101,7 +99,7 @@ public class ScheduleListAdapter extends ArrayAdapter<ScheduleItem> {
             this.dateRow = (TableRow) rowView.findViewById(R.id.v_row_schedule__dateRow);
             this.today = (TextView) rowView.findViewById(R.id.v_row_schedule__todayTextView);
 
-            this.locationTitleContainer = (LinearLayout) rowView.findViewById(R.id.v_row_schedule__locationTitleContainer);
+            this.locationTitleContainer = (RelativeLayout) rowView.findViewById(R.id.v_row_schedule__locationTitleContainer);
         }
 
         public void fill(ScheduleItem item) {

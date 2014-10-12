@@ -1,83 +1,86 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/white">
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/f_schedule_detail__headerLinearLayout"
-        android:paddingTop="10dp"
-        android:paddingBottom="15dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Web-технологии"
-            android:id="@+id/f_schedule_detail__titleTextView"
-            android:textSize="30sp"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Лекция 1"
-            android:id="@+id/f_schedule_detail__subtitleTextView"
-            android:textSize="20sp"/>
-    </LinearLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/f_schedule_detail__timeRelativeLayout"
-        android:layout_below="@id/f_schedule_detail__headerLinearLayout"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentStart="false"
-        android:background="#fffcf8e3"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:layout_height="fill_parent"
+        android:background="@color/white"
+        android:id="@+id/f_schedule_detail">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="18\nсентября"
-            android:id="@+id/f_schedule_detail__dateTextView"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textSize="25sp"
-            android:gravity="center"
-            />
+            android:id="@+id/f_schedule_detail__headerLinearLayout"
+            android:paddingTop="10dp"
+            android:paddingBottom="15dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
 
-        <ImageButton
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Web-технологии"
+                android:id="@+id/f_schedule_detail__titleTextView"
+                android:textSize="25sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Лекция 1"
+                android:id="@+id/f_schedule_detail__subtitleTextView"
+                android:textSize="20sp"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/f_schedule_detail__addToCalendarButton"
-            android:src="@drawable/ic_calendar"
-            android:scaleType="centerInside"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"/>
+            android:id="@+id/f_schedule_detail__timeRelativeLayout"
+            android:layout_below="@id/f_schedule_detail__headerLinearLayout"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="18:00\n22:00"
-            android:id="@+id/f_schedule_detail__timeTextView"
-            android:textSize="25sp"
-            android:gravity="center"
-            android:layout_toEndOf="@id/f_schedule_detail__dateTextView"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/f_schedule_detail__dateTextView"
-            android:layout_toLeftOf="@id/f_schedule_detail__addToCalendarButton"
-            android:layout_toStartOf="@id/f_schedule_detail__addToCalendarButton"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="18\nсентября"
+                android:id="@+id/f_schedule_detail__dateTextView"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textSize="25sp"
+                android:gravity="center"
+                />
 
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/f_schedule_detail__addToCalendarButton"
+                android:src="@drawable/ic_calendar"
+                android:scaleType="centerInside"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignBottom="@+id/f_schedule_detail__timeTextView"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="18:00\n22:00"
+                android:id="@+id/f_schedule_detail__timeTextView"
+                android:textSize="25sp"
+                android:gravity="center"
+                android:layout_toEndOf="@id/f_schedule_detail__dateTextView"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@id/f_schedule_detail__dateTextView"
+                android:layout_toLeftOf="@id/f_schedule_detail__addToCalendarButton"
+                android:layout_toStartOf="@id/f_schedule_detail__addToCalendarButton"/>
+        </RelativeLayout>
 
     </RelativeLayout>
-
-</RelativeLayout>
+</ScrollView>

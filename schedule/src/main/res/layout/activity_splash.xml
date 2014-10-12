@@ -14,13 +14,13 @@
 
     <ImageView
         android:id="@+id/a_splash__logo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/a_splash__titleTextView"
-        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:contentDescription="@string/logo"
         android:src="@drawable/logo"
-        android:scaleType="centerInside"/>
+        android:layout_above="@+id/a_splash__titleTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="35dp"/>
 
     <ProgressBar
         android:layout_width="wrap_content"

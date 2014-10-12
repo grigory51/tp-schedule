@@ -1,6 +1,11 @@
 package ru.mail.tp.schedule.activity;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -11,65 +16,42 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.actionbarsherlock.view.MenuItem;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Date;
 
 import ru.mail.tp.schedule.R;
 import ru.mail.tp.schedule.fragments.OnScheduleItemClick;
 import ru.mail.tp.schedule.fragments.ScheduleDetailFragment;
 import ru.mail.tp.schedule.fragments.ScheduleListFragment;
-import ru.mail.tp.schedule.schedule.ScheduleCache;
 import ru.mail.tp.schedule.schedule.db.DBHelper;
 import ru.mail.tp.schedule.schedule.db.entities.ScheduleItem;
 import ru.mail.tp.schedule.schedule.filter.FilterArrayAdapter;
-import ru.mail.tp.schedule.schedule.filter.FilterSpinner;
 import ru.mail.tp.schedule.schedule.filter.FilterSpinnerItemsContainer;
+import ru.mail.tp.schedule.schedule.filter.FilterState;
 import ru.mail.tp.schedule.schedule.filter.OnFilterChangeListener;
-import ru.mail.tp.schedule.schedule.filter.ScheduleFilter;
 import ru.mail.tp.schedule.tasks.scheduleFetch.ScheduleFetchTaskResult;
+import ru.mail.tp.schedule.utils.ActionBarSherlockMenuItemAdapter;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 import ru.mail.tp.schedule.utils.MoscowSimpleDateFormat;
 
-public class ScheduleActivity extends SherlockFragmentActivity implements OnClickListener, OnScheduleItemClick {
-    private static final String CACHE_NAME = "ScheduleCache.txt";
+public class ScheduleActivity extends SherlockFragmentActivity implements OnScheduleItemClick, FragmentManager.OnBackStackChangedListener {
     private Spinner subgroupsSpinner, disciplinesSpinner, typesSpinner;
     private CheckBox showPastCheckBox;
     private FilterSpinnerItemsContainer filterSpinnerItemsContainer = null;
-    private ScheduleCache cache = null;
-    private SlidingMenu menu;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
 
-        this.getSupportActionBar().setDisplayShowHomeEnabled(false);
-        this.getSupportActionBar().setDisplayShowTitleEnabled(false);
-        this.getSupportActionBar().setDisplayShowCustomEnabled(true);
-        this.getSupportActionBar().setCustomView(R.layout.actionbar);
-
-        this.menu = new SlidingMenu(this);
-        this.menu.setMode(SlidingMenu.LEFT);
-        this.menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-        this.menu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
-        this.menu.setMenu(R.layout.menu);
-        this.menu.setShadowDrawable(R.drawable.shadow);
-        this.menu.setShadowWidth(1);
-
-        int menuWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.7);
-        this.menu.setBehindWidth(menuWidth > 450 ? 450 : menuWidth);
-
         this.subgroupsSpinner = (Spinner) findViewById(R.id.v_menu__subgroupsSpinner);
         this.disciplinesSpinner = (Spinner) findViewById(R.id.v_menu__disciplinesSpinner);
         this.typesSpinner = (Spinner) findViewById(R.id.v_menu__typesSpinner);
         this.showPastCheckBox = (CheckBox) findViewById(R.id.showPastCheckBox);
+        this.drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
         if (savedInstanceState == null) {
             ScheduleFetchTaskResult fetchTaskResult = (ScheduleFetchTaskResult) getIntent().getExtras().get(SplashActivity.TAG_FETCH_RESULT);
@@ -81,16 +63,59 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
                 Toast.makeText(this, "Ошибка обработки данных", Toast.LENGTH_LONG).show();
             }
 
+            FilterState filterState = FilterState.createFromSharedPreferences(this);
+            this.filterSpinnerItemsContainer = new FilterSpinnerItemsContainer(new DBHelper(this), filterState);
+
+            ScheduleListFragment listFragment = new ScheduleListFragment();
+            Bundle arguments = new Bundle();
+            arguments.putSerializable("filter", filterSpinnerItemsContainer.getScheduleFilter());
+            listFragment.setArguments(arguments);
+
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.a_schedule__frameLayout, new ScheduleListFragment())
+                    .add(R.id.a_schedule__frameLayout, listFragment)
                     .commit();
 
-            this.filterSpinnerItemsContainer = new FilterSpinnerItemsContainer(new DBHelper(this));
+
         } else {
             this.filterSpinnerItemsContainer = (FilterSpinnerItemsContainer) savedInstanceState.getSerializable("filterSpinnerItemsContainer");
         }
+
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
+
+        this.initDrawer();
         this.initFilters(this.filterSpinnerItemsContainer);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            return drawerToggle != null && drawerToggle.onOptionsItemSelected(new ActionBarSherlockMenuItemAdapter(item)) || super.onOptionsItemSelected(item);
+        } else {
+            getSupportFragmentManager().popBackStack();
+            return true;
+        }
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        if (this.drawerToggle != null) {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                this.drawerToggle.setDrawerIndicatorEnabled(false);
+                this.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            } else {
+                this.drawerToggle.setDrawerIndicatorEnabled(true);
+                this.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            }
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (this.drawerToggle != null) {
+            this.drawerToggle.syncState();
+        }
     }
 
     @Override
@@ -104,8 +129,23 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
         lastUpdateTextView.setText("Последнее обновление\n" + new MoscowSimpleDateFormat("dd.MM.yyyy в HH:mm").format(date));
     }
 
-    private void initFilters(FilterSpinnerItemsContainer filterContainer) {
+    @SuppressLint("InlinedApi")
+    private void initDrawer() {
+        if (this.drawerLayout != null) {
+            this.drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.opened, R.string.closed);
+            this.drawerToggle.setDrawerIndicatorEnabled(getSupportFragmentManager().getBackStackEntryCount() == 0);
+
+            drawerLayout.setDrawerListener(this.drawerToggle);
+
+            this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            this.getSupportActionBar().setHomeButtonEnabled(true);
+            this.getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+    }
+
+    private void initFilters(final FilterSpinnerItemsContainer filterContainer) {
         if (filterContainer != null) {
+            final Context context = this;
             FilterArrayAdapter subgroupListAdapter = new FilterArrayAdapter(this, filterContainer.getSubgroupItems());
             FilterArrayAdapter disciplineListAdapter = new FilterArrayAdapter(this, filterContainer.getDisciplineItems());
             FilterArrayAdapter typeListAdapter = new FilterArrayAdapter(this, filterContainer.getLessonTypeItems());
@@ -114,22 +154,28 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
             disciplinesSpinner.setAdapter(disciplineListAdapter);
             typesSpinner.setAdapter(typeListAdapter);
 
-            subgroupsSpinner.setSelection(filterSpinnerItemsContainer.getSubgroupPosition(), false);
-            disciplinesSpinner.setSelection(filterSpinnerItemsContainer.getDisciplinePosition(), false);
-            typesSpinner.setSelection(filterSpinnerItemsContainer.getLessonTypePosition(), false);
-            showPastCheckBox.setChecked(filterSpinnerItemsContainer.getShowPassed());
+            int subgroupPosition = filterSpinnerItemsContainer.getFilterState().getSubgroupPosition();
+            int disciplinePosition = filterSpinnerItemsContainer.getFilterState().getDisciplinePosition();
+            int typePosition = filterSpinnerItemsContainer.getFilterState().getLessonTypePosition();
+
+            subgroupsSpinner.setSelection(subgroupPosition < subgroupsSpinner.getCount() ? subgroupPosition : 0, false);
+            disciplinesSpinner.setSelection(disciplinePosition < disciplinesSpinner.getCount() ? disciplinePosition : 0, false);
+            typesSpinner.setSelection(typePosition < typesSpinner.getCount() ? typePosition : 0, false);
+            showPastCheckBox.setChecked(filterSpinnerItemsContainer.getFilterState().isShowPassed());
 
             final OnFilterChangeListener filterChangeListener = new OnFilterChangeListener() {
                 @Override
                 public void onFilterChange() {
-                    filterSpinnerItemsContainer.setSubgroupPosition(subgroupsSpinner.getSelectedItemPosition());
-                    filterSpinnerItemsContainer.setDisciplinePosition(disciplinesSpinner.getSelectedItemPosition());
-                    filterSpinnerItemsContainer.setLessonTypePosition(typesSpinner.getSelectedItemPosition());
-                    filterSpinnerItemsContainer.setShowPassed(showPastCheckBox.isChecked());
+                    filterSpinnerItemsContainer.getFilterState().setSubgroupPosition(subgroupsSpinner.getSelectedItemPosition());
+                    filterSpinnerItemsContainer.getFilterState().setDisciplinePosition(disciplinesSpinner.getSelectedItemPosition());
+                    filterSpinnerItemsContainer.getFilterState().setLessonTypePosition(typesSpinner.getSelectedItemPosition());
+                    filterSpinnerItemsContainer.getFilterState().setShowPassed(showPastCheckBox.isChecked());
+
+                    filterContainer.getFilterState().saveToSharedPreferences(context);
 
                     ScheduleListFragment scheduleListFragment = getScheduleListFragment();
                     if (scheduleListFragment != null) {
-                        scheduleListFragment.setScheduleFilter(getScheduleFilter());
+                        scheduleListFragment.setScheduleFilter(filterSpinnerItemsContainer.getScheduleFilter());
                     }
                 }
             };
@@ -159,53 +205,6 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
         }
     }
 
-    private ScheduleFilter getScheduleFilter() {
-        FilterSpinner subgroupItem = (FilterSpinner) subgroupsSpinner.getSelectedItem();
-        FilterSpinner disciplineItem = (FilterSpinner) disciplinesSpinner.getSelectedItem();
-        FilterSpinner typeItem = (FilterSpinner) typesSpinner.getSelectedItem();
-
-        return new ScheduleFilter(subgroupItem.getId(), disciplineItem.getId(), typeItem.getId(), showPastCheckBox.isChecked());
-    }
-
-    private void saveCache(ScheduleCache cache) {
-        FileOutputStream fos;
-        ObjectOutputStream oos;
-        try {
-            fos = openFileOutput(CACHE_NAME, MODE_PRIVATE);
-            oos = new ObjectOutputStream(fos);
-            oos.writeObject(cache);
-            oos.flush();
-            oos.close();
-            this.cache = cache;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private ScheduleCache getCache() {
-        if (this.cache == null) {
-            FileInputStream fis;
-            ObjectInputStream ois;
-            try {
-                fis = openFileInput(CACHE_NAME);
-                ois = new ObjectInputStream(fis);
-
-                ScheduleCache cache = (ScheduleCache) ois.readObject();
-                ois.close();
-
-                this.cache = cache;
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-        return this.cache;
-    }
 
     private ScheduleListFragment getScheduleListFragment() {
         ScheduleListFragment fragment = null;
@@ -216,45 +215,25 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnClic
         return fragment;
     }
 
-    private ScheduleDetailFragment getScheduleDetailFragment() {
-        ScheduleDetailFragment fragment = null;
-        try {
-            fragment = (ScheduleDetailFragment) getSupportFragmentManager().findFragmentById(R.id.a_schedule__frameLayout);
-        } catch (ClassCastException ignore) {
-        }
-        return fragment;
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.v_actionbar__updateScheduleButton:
-                //todo сделать кнопку обновления расписания
-                break;
-            case R.id.v_actionbar__todayButton:
-                //todo сделать прокручивание к сегодняшнему дню
-                break;
-            case R.id.v_actionbar__menuButton:
-                if (!this.stackNotEmptySemaphore) {
-                    this.menu.showMenu();
-                }
-                break;
-        }
-    }
-
     @Override
     public void onScheduleItemClick(ScheduleItem scheduleItem) {
-        Bundle arguments = new Bundle();
-        arguments.putSerializable("scheduleItem", scheduleItem);
+        ScheduleDetailFragment detailFragment = (ScheduleDetailFragment) getSupportFragmentManager().findFragmentById(R.id.a_schedule__frameLayout_detail);
 
-        ScheduleDetailFragment scheduleDetailFragment = new ScheduleDetailFragment();
-        scheduleDetailFragment.setArguments(arguments);
+        if (detailFragment == null) {
+            Bundle arguments = new Bundle();
+            arguments.putSerializable("scheduleItem", scheduleItem);
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(R.animator.slide_in_left, R.animator.exit_to_left, R.animator.slide_in_left, R.animator.exit_to_left)
-                .replace(R.id.a_schedule__frameLayout, scheduleDetailFragment)
-                .addToBackStack("tag")
-                .commit();
+            ScheduleDetailFragment scheduleDetailFragment = new ScheduleDetailFragment();
+            scheduleDetailFragment.setArguments(arguments);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right, R.animator.slide_in_left, R.animator.slide_out_right)
+                    .replace(R.id.a_schedule__frameLayout, scheduleDetailFragment)
+                    .addToBackStack(null)
+                    .commit();
+        } else {
+            detailFragment.showItem(scheduleItem);
+        }
     }
 }
