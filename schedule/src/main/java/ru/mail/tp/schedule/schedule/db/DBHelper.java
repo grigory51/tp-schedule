@@ -239,7 +239,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 } else if (EventType.LESSON.ordinal() == typeIndex) {
                     ArrayList<Subgroup> subgroups = new ArrayList<Subgroup>();
                     boolean groupMatch = false;
-
+                    //todo нечестная фильтрация по группам из-за денормализации в БД, починить
                     for (String subgroupId : cursor.getString(14).split(",")) {
                         if (filter.getSubgroupId() == 0 || filter.getSubgroupId() == Integer.parseInt(subgroupId)) {
                             groupMatch = true;
