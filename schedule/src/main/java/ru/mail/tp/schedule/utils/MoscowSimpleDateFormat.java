@@ -6,7 +6,7 @@ import java.util.TimeZone;
 
 
 public class MoscowSimpleDateFormat extends SimpleDateFormat {
-    private static final TimeZone moscowTimeZone = TimeZone.getTimeZone("GMT+04");
+    private static final TimeZone moscowTimeZone = TimeZone.getTimeZone(MoscowCalendar.TIME_ZONE);
 
     public MoscowSimpleDateFormat(String pattern) {
         super(pattern, Locale.US);
