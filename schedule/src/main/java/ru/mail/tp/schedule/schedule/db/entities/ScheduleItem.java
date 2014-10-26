@@ -3,6 +3,8 @@ package ru.mail.tp.schedule.schedule.db.entities;
 import android.content.ContentValues;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -40,14 +42,14 @@ public class ScheduleItem extends BaseEntity implements Serializable {
 
     private final int id;
     private final EventType eventType;
-    private final Date timeStart;
-    private final Date timeEnd;
     private final String title;
     private final Place place;
     private final Discipline discipline;
     private final ArrayList<Subgroup> subgroups;
     private final LessonType lessonType;
     private final int number;
+    private Date timeStart;
+    private Date timeEnd;
 
     private ScheduleItem() {
         this(0, 0, 0, "", null);
@@ -77,6 +79,29 @@ public class ScheduleItem extends BaseEntity implements Serializable {
         this.lessonType = lessonType;
         this.number = number;
         this.place = place;
+
+        //time fixing
+        try {
+            Calendar startCalendar = MoscowCalendar.getInstance();
+            Calendar endCalendar = MoscowCalendar.getInstance();
+            Calendar todayCalendar = MoscowCalendar.getInstance();
+
+            todayCalendar.setTime(new SimpleDateFormat("MM/dd/yy").parse("10/26/14"));
+            startCalendar.setTime(this.timeStart);
+            endCalendar.setTime(this.timeEnd);
+
+            if (startCalendar.before(todayCalendar)) {
+                startCalendar.set(Calendar.MINUTE, startCalendar.get(Calendar.MINUTE) + 30); //Почему если прибавить полчаса будет корректировка на час
+                this.timeStart = startCalendar.getTime();                                    //а если прибавить час, то отображаться будет +2 часа??? Wtf??
+            }
+            if (endCalendar.before(todayCalendar)) {
+                endCalendar.set(Calendar.MINUTE, endCalendar.get(Calendar.MINUTE) + 30);
+                this.timeEnd = endCalendar.getTime();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static ScheduleItem instance() {

@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
-def version = "1.0.1"
+def versionValue = "1.0.3"
+def versionCodeValue = 6
 
 android {
     compileSdkVersion 20
@@ -10,8 +11,8 @@ android {
         applicationId "ru.mail.tp.schedule"
         minSdkVersion 7
         targetSdkVersion 20
-        versionName version
-        versionCode 4
+        versionName versionValue
+        versionCode versionCodeValue
     }
 
     buildTypes {

@@ -8,6 +8,7 @@ import java.util.TimeZone;
  * date: 30/09/14
  */
 public abstract class MoscowCalendar extends Calendar {
+    public static final String TIME_ZONE = "GMT+03";
     private static final String[] weekDays = {"Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"};
     private static final String[] month = {"января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"};
 
@@ -28,11 +29,11 @@ public abstract class MoscowCalendar extends Calendar {
     }
 
     public static synchronized Calendar getInstance() {
-        return MoscowCalendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
+        return MoscowCalendar.getInstance(TimeZone.getTimeZone(TIME_ZONE));
     }
 
     public static synchronized Calendar getTodayInstance() {
-        Calendar todayCalendar = MoscowCalendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
+        Calendar todayCalendar = MoscowCalendar.getInstance(TimeZone.getTimeZone(TIME_ZONE));
         MoscowCalendar.resetTime(todayCalendar);
 
         return todayCalendar;
