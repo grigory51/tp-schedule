@@ -3,9 +3,13 @@ package ru.mail.tp.schedule.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -14,9 +18,6 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
 
 import java.util.Date;
 
@@ -31,11 +32,10 @@ import ru.mail.tp.schedule.schedule.filter.FilterSpinnerItemsContainer;
 import ru.mail.tp.schedule.schedule.filter.FilterState;
 import ru.mail.tp.schedule.schedule.filter.OnFilterChangeListener;
 import ru.mail.tp.schedule.tasks.scheduleFetch.ScheduleFetchTaskResult;
-import ru.mail.tp.schedule.utils.ActionBarSherlockMenuItemAdapter;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 import ru.mail.tp.schedule.utils.MoscowSimpleDateFormat;
 
-public class ScheduleActivity extends SherlockFragmentActivity implements OnScheduleItemClick, FragmentManager.OnBackStackChangedListener {
+public class ScheduleActivity extends ActionBarActivity implements OnScheduleItemClick, FragmentManager.OnBackStackChangedListener {
     private Spinner subgroupsSpinner, disciplinesSpinner, typesSpinner;
     private CheckBox showPastCheckBox;
     private FilterSpinnerItemsContainer filterSpinnerItemsContainer = null;
@@ -75,8 +75,6 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnSche
                     .beginTransaction()
                     .add(R.id.a_schedule__frameLayout, listFragment)
                     .commit();
-
-
         } else {
             this.filterSpinnerItemsContainer = (FilterSpinnerItemsContainer) savedInstanceState.getSerializable("filterSpinnerItemsContainer");
         }
@@ -90,7 +88,7 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnSche
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            return drawerToggle != null && drawerToggle.onOptionsItemSelected(new ActionBarSherlockMenuItemAdapter(item)) || super.onOptionsItemSelected(item);
+            return drawerToggle != null && drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
         } else {
             getSupportFragmentManager().popBackStack();
             return true;
@@ -131,15 +129,24 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnSche
 
     @SuppressLint("InlinedApi")
     private void initDrawer() {
+        this.drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+
+
         if (this.drawerLayout != null) {
-            this.drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.opened, R.string.closed);
-            this.drawerToggle.setDrawerIndicatorEnabled(getSupportFragmentManager().getBackStackEntryCount() == 0);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-            drawerLayout.setDrawerListener(this.drawerToggle);
+            this.setSupportActionBar(toolbar);
+            ActionBar actionBar = this.getSupportActionBar();
 
-            this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            this.getSupportActionBar().setHomeButtonEnabled(true);
-            this.getSupportActionBar().setDisplayShowTitleEnabled(false);
+            actionBar.setIcon(getResources().getDrawable(R.drawable.ic_launcher));
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+
+
+            this.drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.opened, R.string.closed);
+            this.drawerLayout.setDrawerListener(this.drawerToggle);
+            this.drawerToggle.syncState();
         }
     }
 
