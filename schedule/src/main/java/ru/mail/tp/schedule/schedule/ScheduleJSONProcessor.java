@@ -126,15 +126,18 @@ public class ScheduleJSONProcessor {
             int number = item.getInt("number");
 
             JSONObject subgroupsIds = item.getJSONObject("subgroups");
-            ArrayList<Subgroup> subgroups = new ArrayList<Subgroup>();
+            ArrayList<Subgroup> subgroups = new ArrayList<>();
             Iterator<?> keys = subgroupsIds.keys();
 
-            HashSet<String> uniqueIds = new HashSet<String>(); //фиксит баг в API (дублирующиеся id учебных групп), временный костыль
+            HashSet<String> uniqueIds = new HashSet<>(); //фиксит баг в API (дублирующиеся id учебных групп), временный костыль
             while (keys.hasNext()) {
                 String subgroupId = subgroupsIds.getString((String) keys.next());
                 if (!uniqueIds.contains(subgroupId)) {
                     uniqueIds.add(subgroupId);
-                    subgroups.add(this.subgroups.get(subgroupId));
+                    Subgroup subgroup = this.subgroups.get(subgroupId);
+                    if (subgroup != null) {
+                        subgroups.add(subgroup);
+                    }
                 }
             }
 
