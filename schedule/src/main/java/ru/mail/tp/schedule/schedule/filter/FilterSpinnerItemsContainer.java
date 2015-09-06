@@ -25,7 +25,7 @@ public class FilterSpinnerItemsContainer implements Serializable {
         this.lessonTypeItems.add(new FilterSpinner(new LessonType(0, "Все")));
 
         for (Subgroup item : db.getSubgroups()) {
-               this.subgroupItems.add(item);
+            this.subgroupItems.add(item);
         }
         for (Discipline item : db.getDisciplines()) {
             this.disciplineItems.add(item);

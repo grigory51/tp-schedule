@@ -241,12 +241,15 @@ public class DBHelper extends SQLiteOpenHelper {
                     boolean groupMatch = false;
                     //todo нечестная фильтрация по группам из-за денормализации в БД, починить
                     for (String subgroupId : cursor.getString(14).split(",")) {
-                        if (filter.getSubgroupId() == 0 || filter.getSubgroupId() == Integer.parseInt(subgroupId)) {
-                            groupMatch = true;
-                        }
+                        try {
+                            if (filter.getSubgroupId() == 0 || filter.getSubgroupId() == Integer.parseInt(subgroupId)) {
+                                groupMatch = true;
+                            }
 
-                        if (subgroupsMap.containsKey(subgroupId)) {
-                            subgroups.add(subgroupsMap.get(subgroupId));
+                            if (subgroupsMap.containsKey(subgroupId)) {
+                                subgroups.add(subgroupsMap.get(subgroupId));
+                            }
+                        } catch (NumberFormatException ignore) {
                         }
                     }
                     if (groupMatch) {

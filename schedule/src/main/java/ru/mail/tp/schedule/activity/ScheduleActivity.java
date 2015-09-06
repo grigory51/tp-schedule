@@ -3,9 +3,11 @@ package ru.mail.tp.schedule.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -14,9 +16,6 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
 
 import java.util.Date;
 
@@ -31,11 +30,10 @@ import ru.mail.tp.schedule.schedule.filter.FilterSpinnerItemsContainer;
 import ru.mail.tp.schedule.schedule.filter.FilterState;
 import ru.mail.tp.schedule.schedule.filter.OnFilterChangeListener;
 import ru.mail.tp.schedule.tasks.scheduleFetch.ScheduleFetchTaskResult;
-import ru.mail.tp.schedule.utils.ActionBarSherlockMenuItemAdapter;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 import ru.mail.tp.schedule.utils.MoscowSimpleDateFormat;
 
-public class ScheduleActivity extends SherlockFragmentActivity implements OnScheduleItemClick, FragmentManager.OnBackStackChangedListener {
+public class ScheduleActivity extends AppCompatActivity implements OnScheduleItemClick, FragmentManager.OnBackStackChangedListener {
     private Spinner subgroupsSpinner, disciplinesSpinner, typesSpinner;
     private CheckBox showPastCheckBox;
     private FilterSpinnerItemsContainer filterSpinnerItemsContainer = null;
@@ -75,8 +73,6 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnSche
                     .beginTransaction()
                     .add(R.id.a_schedule__frameLayout, listFragment)
                     .commit();
-
-
         } else {
             this.filterSpinnerItemsContainer = (FilterSpinnerItemsContainer) savedInstanceState.getSerializable("filterSpinnerItemsContainer");
         }
@@ -85,16 +81,6 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnSche
 
         this.initDrawer();
         this.initFilters(this.filterSpinnerItemsContainer);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            return drawerToggle != null && drawerToggle.onOptionsItemSelected(new ActionBarSherlockMenuItemAdapter(item)) || super.onOptionsItemSelected(item);
-        } else {
-            getSupportFragmentManager().popBackStack();
-            return true;
-        }
     }
 
     @Override
@@ -131,15 +117,30 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnSche
 
     @SuppressLint("InlinedApi")
     private void initDrawer() {
+        this.drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+
         if (this.drawerLayout != null) {
-            this.drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.opened, R.string.closed);
-            this.drawerToggle.setDrawerIndicatorEnabled(getSupportFragmentManager().getBackStackEntryCount() == 0);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar.setLogo(R.drawable.ic_launcher);
+            toolbar.setTitle("");
 
-            drawerLayout.setDrawerListener(this.drawerToggle);
+            this.setSupportActionBar(toolbar);
 
-            this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            this.getSupportActionBar().setHomeButtonEnabled(true);
-            this.getSupportActionBar().setDisplayShowTitleEnabled(false);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+
+            this.drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.opened, R.string.closed);
+            this.drawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                        getSupportFragmentManager().popBackStack();
+                    }
+                }
+            });
+            this.drawerLayout.setDrawerListener(this.drawerToggle);
+            this.drawerToggle.syncState();
         }
     }
 
@@ -228,7 +229,7 @@ public class ScheduleActivity extends SherlockFragmentActivity implements OnSche
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right, R.animator.slide_in_left, R.animator.slide_out_right)
+                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                     .replace(R.id.a_schedule__frameLayout, scheduleDetailFragment)
                     .addToBackStack(null)
                     .commit();
