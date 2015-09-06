@@ -66,6 +66,14 @@ public class ScheduleItem extends BaseEntity implements Serializable {
     private ScheduleItem(int id, EventType eventType, long timeStart, long timeEnd, String title, Place place, ArrayList<Subgroup> subgroups, Discipline discipline, LessonType lessonType, int number) {
         this.id = id;
         this.eventType = eventType;
+
+        if (timeStart < Math.pow(10, 12)) {
+            timeStart = timeStart * 1000 + (1000 * 60 * 60 * 3);
+        }
+        if (timeEnd < Math.pow(10, 12)) {
+            timeEnd = timeEnd * 1000 + (1000 * 60 * 60 * 3);
+        }
+
         this.timeStart = new Date(timeStart);
         this.timeEnd = new Date(timeEnd);
         this.title = title;
@@ -73,7 +81,7 @@ public class ScheduleItem extends BaseEntity implements Serializable {
             this.subgroups = subgroups;
             Collections.sort(this.subgroups, subgroupComparator);
         } else {
-            this.subgroups = new ArrayList<Subgroup>();
+            this.subgroups = new ArrayList<>();
         }
         this.discipline = discipline;
         this.lessonType = lessonType;
@@ -131,7 +139,7 @@ public class ScheduleItem extends BaseEntity implements Serializable {
     public String getTitle() {
         if (this.getEventType() == EventType.EVENT) {
             return this.title;
-        } else if (this.getEventType() == EventType.LESSON) {
+        } else if (this.getEventType() == EventType.LESSON && this.getDiscipline() != null) {
             return this.getDiscipline().getTitle();
         }
         return "";
