@@ -235,7 +235,7 @@ public class ScheduleActivity extends ActionBarActivity implements OnScheduleIte
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right, R.animator.slide_in_left, R.animator.slide_out_right)
+                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
                     .replace(R.id.a_schedule__frameLayout, scheduleDetailFragment)
                     .addToBackStack(null)
                     .commit();
