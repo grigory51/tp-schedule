@@ -3,8 +3,8 @@
 
     </style>
 
-    <style name="AppTheme.Base" parent="Theme.AppCompat.Light">
-        <item name="windowActionBar">false</item>
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+
     </style>
 
     <color name="dateRow">#f0f0f0</color>

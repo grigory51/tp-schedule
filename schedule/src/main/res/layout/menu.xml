@@ -1,83 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:id="@+id/menu"
-    android:longClickable="true"
-    android:background="#ffffffff">
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:id="@+id/menu"
+        android:longClickable="true"
+        android:background="#ffffffff">
 
     <LinearLayout
-        android:id="@+id/v_menu__linearLayout"
-        style="@style/menuItem">
+            android:id="@+id/v_menu__linearLayout"
+            style="@style/menuItem">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/subgroup"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/subgroup"/>
 
         <Spinner
-            android:id="@+id/v_menu__subgroupsSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                android:id="@+id/v_menu__subgroupsSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
-        style="@style/menuItem"
-        android:id="@+id/v_menu__linearLayout2"
-        android:layout_below="@id/v_menu__linearLayout">
+            style="@style/menuItem"
+            android:id="@+id/v_menu__linearLayout2"
+            android:layout_below="@id/v_menu__linearLayout">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/discipline"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/discipline"/>
 
         <Spinner
-            android:id="@+id/v_menu__disciplinesSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                android:id="@+id/v_menu__disciplinesSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/v_menu__linearLayout3"
-        android:layout_below="@id/v_menu__linearLayout2"
-        style="@style/menuItem">
+            android:id="@+id/v_menu__linearLayout3"
+            android:layout_below="@id/v_menu__linearLayout2"
+            style="@style/menuItem">
 
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/type"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/type"/>
 
         <Spinner
-            android:id="@+id/v_menu__typesSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                android:id="@+id/v_menu__typesSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_below="@id/v_menu__linearLayout3"
-        style="@style/menuItem">
+            android:orientation="vertical"
+            android:layout_below="@id/v_menu__linearLayout3"
+            style="@style/menuItem">
 
         <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/showPast"
-            android:id="@+id/showPastCheckBox"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/showPast"
+                android:id="@+id/showPastCheckBox"/>
 
     </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/v_menu__lastUpdateTextView"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:layout_marginBottom="10dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/v_menu__lastUpdateTextView"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:layout_marginBottom="10dp"/>
 
 </RelativeLayout>
