@@ -5,11 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -35,7 +33,7 @@ import ru.mail.tp.schedule.tasks.scheduleFetch.ScheduleFetchTaskResult;
 import ru.mail.tp.schedule.utils.MoscowCalendar;
 import ru.mail.tp.schedule.utils.MoscowSimpleDateFormat;
 
-public class ScheduleActivity extends ActionBarActivity implements OnScheduleItemClick, FragmentManager.OnBackStackChangedListener {
+public class ScheduleActivity extends AppCompatActivity implements OnScheduleItemClick, FragmentManager.OnBackStackChangedListener {
     private Spinner subgroupsSpinner, disciplinesSpinner, typesSpinner;
     private CheckBox showPastCheckBox;
     private FilterSpinnerItemsContainer filterSpinnerItemsContainer = null;
@@ -86,16 +84,6 @@ public class ScheduleActivity extends ActionBarActivity implements OnScheduleIte
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            return drawerToggle != null && drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
-        } else {
-            getSupportFragmentManager().popBackStack();
-            return true;
-        }
-    }
-
-    @Override
     public void onBackStackChanged() {
         if (this.drawerToggle != null) {
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
@@ -131,20 +119,26 @@ public class ScheduleActivity extends ActionBarActivity implements OnScheduleIte
     private void initDrawer() {
         this.drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
-
         if (this.drawerLayout != null) {
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar.setLogo(R.drawable.ic_launcher);
+            toolbar.setTitle("");
 
             this.setSupportActionBar(toolbar);
-            ActionBar actionBar = this.getSupportActionBar();
 
-            actionBar.setIcon(getResources().getDrawable(R.drawable.ic_launcher));
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
-
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
 
             this.drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.opened, R.string.closed);
+            this.drawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                        getSupportFragmentManager().popBackStack();
+                    }
+                }
+            });
             this.drawerLayout.setDrawerListener(this.drawerToggle);
             this.drawerToggle.syncState();
         }
